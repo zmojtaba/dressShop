@@ -1,0 +1,5 @@
+django
+djangorestframework
+phonenumber-field[phonenumbers]
+djangorestframework-simplejwt
+drf-yasg
