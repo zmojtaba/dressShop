@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.core import exceptions
 import django.contrib.auth.password_validation as validators
 from ..models import (User)
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenBlacklistSerializer
 import datetime
 from django.conf import settings
 
@@ -40,3 +40,11 @@ class UserLoginSerializer(TokenObtainPairSerializer):
         return data
 
 
+class UserLogoutSerializer(TokenBlacklistSerializer):
+    def validate(self, attrs):
+        data = super(UserLogoutSerializer, self).validate(attrs)
+
+        data['detail'] = "successfully logged out"
+
+        return data
+        
