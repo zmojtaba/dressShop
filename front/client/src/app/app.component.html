@@ -1,0 +1,11 @@
+<nb-layout>
+    <nb-layout-header>
+        <button nbButton status="success" size="tiny" (click)="toggle()">Toggle</button>
+            <app-header></app-header>
+    </nb-layout-header>
+    <nb-layout-footer>footer</nb-layout-footer>
+    <nb-layout-column>
+         <router-outlet></router-outlet> 
+    </nb-layout-column>
+    <nb-sidebar> side bar </nb-sidebar>
+</nb-layout>

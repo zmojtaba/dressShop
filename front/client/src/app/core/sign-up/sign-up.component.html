@@ -1,0 +1,12 @@
+
+<div class="container">
+    <form class="form-group"  #userSignUp="ngForm" (ngSubmit)="onSignUp(userSignUp)" >
+        <label for="email"> email</label>
+        <input type="email" class="form-control mt-1" id="email" name="email" ngModel>
+        <label for="password"> password</label>
+        <input type="password" class="form-control mt-1" id="password" name="password" ngModel>
+        <label for="password1"> password1</label>
+        <input type="password" class="form-control mt-1" id="password1" name="password1" ngModel>
+        <button type="submit" class="btn btn-primary mt-1">Submit</button>
+    </form>
+</div>
