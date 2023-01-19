@@ -4,8 +4,8 @@ from .models import *
 # Register your models here.
 class CustomUserAdmin(UserAdmin):
     model = User
-    list_display = ('email','user_name', 'phone', 'is_staff','is_active')
-    list_filter = ('email', 'user_name', 'phone', 'is_staff','is_active')
+    list_display = ('email','user_name', 'phone', 'is_staff','is_active',"is_verified")
+    list_filter = ('email', 'user_name', 'phone', 'is_staff','is_active', 'is_verified')
     search_fields = ('email','user_name', 'phone')
     ordering = ('email',)
     fieldsets = (
@@ -16,7 +16,7 @@ class CustomUserAdmin(UserAdmin):
        }),
        ('permissions', {
            "fields": (
-               'is_staff', 'is_active','is_superuser'
+               'is_staff', 'is_active','is_superuser','is_verified'
 
            ),
        }),
@@ -24,7 +24,7 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email','user_name', 'phone' , 'password1','password2', 'is_staff', 'is_active','is_superuser')}
+            'fields': ('email','user_name', 'phone' , 'password1','password2', 'is_staff', 'is_active','is_superuser','is_verified')}
          ),
     )
 

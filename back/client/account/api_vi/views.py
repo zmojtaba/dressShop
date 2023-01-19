@@ -14,7 +14,8 @@ class UserRegistrationApiView(GenericAPIView):
     def post(self, request, *args, **kwargs):       
         serializer = self.serializer_class(data = request.data)
         serializer.is_valid(raise_exception=True)
-        return Response('registration page',status=status.HTTP_201_CREATED)
+        serializer.save()
+        return Response({'detail':"sign up successfully"},status=status.HTTP_201_CREATED)
 
 
 
