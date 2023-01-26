@@ -39,11 +39,11 @@ class UserLoginSerializer(TokenObtainPairSerializer):
             data = super().validate(attrs)
         except:
             raise serializers.ValidationError({"password": "Invalid password"})
-
         data['email'] = self.user.email
         data['access_exp'] = settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME']
         data['refresh_exp'] = settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
         return data
+
 
 
 class UserLogoutSerializer(TokenBlacklistSerializer):
