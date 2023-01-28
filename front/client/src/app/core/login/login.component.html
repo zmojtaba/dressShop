@@ -1,1 +1,19 @@
-<p>login works!</p>
+<div class="col-xs-12 col-md-6 col-md-offser-3" >
+    <ng-container *ngIf="loginError" >
+        <div class="alert alert-danger" role="alert"  *ngFor="let err of loginError" >
+            {{err}}
+          </div>
+        </ng-container> 
+    <form #logInForm="ngForm" (ngSubmit)="onLogin(logInForm)" *ngIf="!loadingSpinner" >
+        <div class="form-group">
+            <label for="email">email</label>
+            <input type="email" id="email" class="form-control" ngModel name="email" email required>
+            <label for="password">password</label>
+            <input type="text" id="password" class="form-control" [ngClass]="{'ng-invalid' :!logInForm.valid  }" ngModel name="password" required>
+            <small> <a> forgot password? </a> </small><br>
+            <button type="submit" class="btn btn-primary mt-1" [disabled]="!logInForm.valid" > Log in </button>
+        </div>
+    </form>
+    <mat-spinner *ngIf="loadingSpinner" ></mat-spinner>
+
+</div>

@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { SignUpRoutingModule } from './sign-up-routing.module';
 import { SignUpComponent } from './sign-up.component';
 import { FormsModule } from '@angular/forms';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner'
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { FormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     SignUpRoutingModule,
-    FormsModule
+    FormsModule,
+    MatProgressSpinnerModule
   ]
 })
 export class SignUpModule { }

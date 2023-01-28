@@ -9,12 +9,26 @@ import {AuthService} from '../../services/auth.service'
 })
 export class SignUpComponent {
   constructor(public authService: AuthService){}
+  signUpSipper: boolean = false;
+  signupError: string = '';
+  signupSuccess: string = '';;
 
   onSignUp(form:NgForm){
-    this.authService.signUpService(form.value['email'], form.value['password'], form.value['password1'])
+    if (!form.valid){return}
+    const email = form.value.email
+    const password = form.value.password
+    const password1 = form.value.password1
+    
+    this.authService.signUpService(email, password, password1)
     .subscribe(data => {
-      console.log(form.value['email'])
-    })
+      this.signupSuccess = 'sign up successfully'
+    }, errorMessage => {
+      this.signupError = errorMessage
+    }
+    );
+    
+    form.reset()
+    
   }
 
 }

@@ -1,1 +1,10 @@
-<p>home works!</p>
+<div class="container" >
+    <div class="alert alert-success col-md-offser-3" *ngIf="loginData && userIsLoggedIn">
+        {{loginData.email}}
+    </div>
+
+    <div class="alert alert-success col-md-offser-3" *ngIf="logoutData && !userIsLoggedIn" >
+        {{logoutData}}
+
+    </div>
+</div>

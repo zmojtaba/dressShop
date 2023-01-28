@@ -1,0 +1,15 @@
+::ng-deep nb-layout-column{
+
+    .form-control:focus {
+            box-shadow: none
+    }
+    .ng-invalid {
+        border-color: rgb(223, 62, 62)
+    }
+    .ng-valid{
+        border-color: rgb(42, 204, 71)
+    }
+
+
+
+}

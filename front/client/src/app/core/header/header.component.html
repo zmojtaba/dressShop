@@ -27,9 +27,12 @@
           <a class="nav-link disabled" >Disabled</a>
         </li>
       </ul>
-      <ul class="navbar-nav ms-auto">
+      <ul class="navbar-nav ms-auto" *ngIf="!userIslogedIn">
         <li><a class="me-3" [routerLink]="[ 'sign-up' ]" routerLinkActive> Sign Up</a></li>
         <li><a class="me-3" [routerLink]="[ 'login' ]" routerLinkActive> Login</a></li>
+      </ul>
+      <ul class="navbar-nav ms-auto" *ngIf="userIslogedIn">
+        <li><a class="me-3" (click)="onLogOut()" [routerLink]="['']" routerLinkActive> Sign Out</a></li>
       </ul>
     </div>
   </nav>

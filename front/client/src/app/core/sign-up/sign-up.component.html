@@ -1,12 +1,24 @@
 
-<div class="container">
+<div class="col-xs-12 col-md-6 col-md-offser-3" *ngIf="!signUpSipper">
+    <ng-container *ngIf="signupError" >
+    <div class="alert alert-danger" role="alert"  *ngFor="let err of signupError" >
+        {{err}}
+      </div>
+    </ng-container> 
+    <div class="alert alert-success" role="alert" *ngIf="signupSuccess"  >
+        {{signupSuccess}}
+      </div>
     <form class="form-group"  #userSignUp="ngForm" (ngSubmit)="onSignUp(userSignUp)" >
         <label for="email"> email</label>
-        <input type="email" class="form-control mt-1" id="email" name="email" ngModel>
+        <input type="email" class="form-control mt-1" id="email" name="email" ngModel required email>
         <label for="password"> password</label>
-        <input type="password" class="form-control mt-1" id="password" name="password" ngModel>
+        <input type="password" class="form-control mt-1" id="password" name="password" ngModel required>
         <label for="password1"> password1</label>
-        <input type="password" class="form-control mt-1" id="password1" name="password1" ngModel>
-        <button type="submit" class="btn btn-primary mt-1">Submit</button>
+        <input type="password" class="form-control mt-1" id="password1" name="password1" ngModel required>
+        <button type="submit" class="btn btn-primary mt-1" [disabled]="!userSignUp.valid">Submit</button>
     </form>
+    <div>
+        {{userSignUp.errors}}
+    </div>
+    <mat-spinner *ngIf="signUpSipper"></mat-spinner>
 </div>
