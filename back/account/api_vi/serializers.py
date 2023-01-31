@@ -60,6 +60,35 @@ class UserLogoutSerializer(TokenBlacklistSerializer):
         return data
         
 
+class ChangePasswordSerializer(serializers.Serializer):
+    current_password = serializers.CharField(max_length=250, required=True)
+    new_password = serializers.CharField(max_length=250, required=True)
+    new_password_confirm = serializers.CharField(max_length=250, required=True)
+    
+    class Meta:
+        model = User
+        fields = ['current_password', 'new_password', 'new_password_confirm']
+
+    def validate(self, attrs):
+        if attrs['new_password']!= attrs['new_password_confirm']:
+            raise serializers.ValidationError({"new_password": "Password does not match"})
+
+        try:
+            validators.validate_password(password=attrs.get('new_password'))
+        
+        except exceptions.ValidationError as e:
+            raise serializers.ValidationError({ "new_password": e.messages})
+
+        return super().validate(attrs)
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['new_password'])
+        instance.save()
+        return instance
+
+
+# this part is related to profile
+
 class AdressSerializer(serializers.ModelSerializer):
     # user = UserSerializer(read_only=True)
     email = serializers.CharField(source='user.email')

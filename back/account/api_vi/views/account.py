@@ -1,7 +1,8 @@
 from rest_framework.generics import GenericAPIView
 from ..serializers import (UserRegistrationSerializer, 
                         UserLoginSerializer, 
-                        UserLogoutSerializer,)
+                        UserLogoutSerializer,
+                        ChangePasswordSerializer,)
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import (TokenObtainPairView,TokenBlacklistView)
@@ -59,3 +60,19 @@ class emailView(APIView):
         message = EmailMessage('email/hello.html', {'token':token}, 'kaka.mehrsam@gmail.com', ['mojtaba.zare8131@gmail.com'])
         EmailThreading(message).start()
         return Response('success')
+
+
+from django.contrib.auth import authenticate
+
+class ChangePasswordView(APIView):
+    serializer_class = ChangePasswordSerializer
+    def post(self, request, *args, **kwargs):
+        user = authenticate(email=request.user.email, password=request.data['current_password'])
+        if user is not None:
+            serializer = self.serializer_class(user, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            # user.set_password(request.data['new_password'])
+            # user.save()
+            serializer.save()
+            return Response({'detail': 'success'})
+        return Response({'detail': 'your current password is not correct'}, status=status.HTTP_406_NOT_ACCEPTABLE)
