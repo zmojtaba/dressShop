@@ -1,5 +1,9 @@
 django
 djangorestframework
-phonenumber-field[phonenumbers]
+django-phonenumber-field[phonenumbers]
 djangorestframework-simplejwt
 drf-yasg
+django-cors-headers
+psycopg2-binary
+Pillow
+django-mail-templated

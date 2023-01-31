@@ -1,9 +1,16 @@
 from rest_framework import serializers
 from django.core import exceptions
 import django.contrib.auth.password_validation as validators
-from ..models import (User)
+from ..models import (Adress, Profile)
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenBlacklistSerializer
-from django.conf import settings
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['email', 'phone', 'is_staff', 'is_superuser', 'is_active', 'is_verified']
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password1 = serializers.CharField(max_length=250, write_only=True)
@@ -44,8 +51,6 @@ class UserLoginSerializer(TokenObtainPairSerializer):
         data['refresh_exp'] = settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
         return data
 
-
-
 class UserLogoutSerializer(TokenBlacklistSerializer):
     def validate(self, attrs):
         data = super(UserLogoutSerializer, self).validate(attrs)
@@ -53,4 +58,23 @@ class UserLogoutSerializer(TokenBlacklistSerializer):
         data['detail'] = "successfully logged out"
 
         return data
+        
+
+class AdressSerializer(serializers.ModelSerializer):
+    # user = UserSerializer(read_only=True)
+    email = serializers.CharField(source='user.email')
+    class Meta:
+        model = Adress
+        fields = ('email', "state", "city", "street", "alley", "plaque", "postalـcode", "extra_commnent",)
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(required=False, use_url=True)
+    adress = AdressSerializer(many=True)
+    class Meta:
+        model = Profile
+        fields = ('adress', 'first_name', 'last_name', 'image', 'description',)
+
+
+
         
