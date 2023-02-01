@@ -4,6 +4,7 @@ import django.contrib.auth.password_validation as validators
 from ..models import (Adress, Profile)
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenBlacklistSerializer
 from django.contrib.auth import get_user_model
+from django.conf import settings
 
 User = get_user_model()
 
@@ -33,6 +34,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+class ResendVerificationEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=250, required=True)
 
 
 class UserLoginSerializer(TokenObtainPairSerializer):
@@ -64,7 +68,7 @@ class ChangePasswordSerializer(serializers.Serializer):
     current_password = serializers.CharField(max_length=250, required=True)
     new_password = serializers.CharField(max_length=250, required=True)
     new_password_confirm = serializers.CharField(max_length=250, required=True)
-    
+
     class Meta:
         model = User
         fields = ['current_password', 'new_password', 'new_password_confirm']
