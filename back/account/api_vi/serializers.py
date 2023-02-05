@@ -91,6 +91,21 @@ class ChangePasswordSerializer(serializers.Serializer):
         return instance
 
 
+class ResetPasswordSerializer(serializers.Serializer):
+    new_password = serializers.CharField(max_length=250, required=True)
+    new_password_confirm = serializers.CharField(max_length=250, required=True)
+
+    def validate(self, attrs):
+        if attrs['new_password']!= attrs['new_password_confirm']:
+            raise serializers.ValidationError({"new_password": "Password does not match"})
+
+        try:
+            validators.validate_password(password=attrs.get('new_password'))
+        
+        except exceptions.ValidationError as e:
+            raise serializers.ValidationError({ "new_password": e.messages})
+        return super().validate(attrs)
+
 # this part is related to profile
 
 class AdressSerializer(serializers.ModelSerializer):

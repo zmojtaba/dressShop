@@ -3,8 +3,9 @@ from ..serializers import (UserRegistrationSerializer,
                         UserLoginSerializer, 
                         UserLogoutSerializer,
                         ChangePasswordSerializer,
-                        ResendVerificationEmailSerializer)
-from rest_framework import status
+                        ResendVerificationEmailSerializer,
+                        ResetPasswordSerializer)
+from rest_framework import status, serializers
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import (TokenObtainPairView,TokenBlacklistView)
 from rest_framework.views import APIView
@@ -12,11 +13,16 @@ from rest_framework_simplejwt.tokens import RefreshToken
 import threading
 from mail_templated import EmailMessage
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 import jwt
 from django.conf import settings
 
 User = get_user_model()
+
+# this part should move to utils.py
+def get_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
+    return str(refresh)
 
 class EmailThreading(threading.Thread):
     def __init__(self, message):
@@ -28,9 +34,6 @@ class EmailThreading(threading.Thread):
 
 class UserRegistrationApiView(GenericAPIView):
     serializer_class = UserRegistrationSerializer
-    def get_tokens_for_user(self, user):
-        refresh = RefreshToken.for_user(user)
-        return str(refresh)
 
     def post(self, request, *args, **kwargs):       
         serializer = self.serializer_class(data = request.data)
@@ -38,7 +41,7 @@ class UserRegistrationApiView(GenericAPIView):
         serializer.save()
         # send email to created user
         user = User.objects.get(email = serializer.validated_data['email'])
-        refresh = self.get_tokens_for_user(user)
+        refresh = get_tokens_for_user(user)
         varification_email = EmailMessage('email/email_varification.html', 
                                     {'token':refresh}, 
                                     'kaka.mehrsam@gmail.com', 
@@ -50,15 +53,12 @@ class UserRegistrationApiView(GenericAPIView):
 
 class ResendEmailVerificationApiView(APIView):
     serializer_class = ResendVerificationEmailSerializer
-    def get_tokens_for_user(self, user):
-        refresh = RefreshToken.for_user(user)
-        return str(refresh)
 
     def post(self, request, *args, **kwargs):
         user = User.objects.filter(email = request.data['email'])[0]
         if not user:
             return Response({'detail':'user does not exist'}, status=status.HTTP_404_NOT_FOUND)
-        refresh = self.get_tokens_for_user(user)
+        refresh = get_tokens_for_user(user)
         varification_email = EmailMessage('email/email_varification.html', 
                                     {'token':refresh}, 
                                     'kaka.mehrsam@gmail.com', 
@@ -90,7 +90,7 @@ class UserLogoutView(TokenBlacklistView):
     """
     serializer_class = UserLogoutSerializer
 
-from django.contrib.auth import authenticate
+
 
 class ChangePasswordView(APIView):
     serializer_class = ChangePasswordSerializer
@@ -108,12 +108,43 @@ class ChangePasswordView(APIView):
 
 # reset password when userhas not loged in yet
 
+class ResetPasswordEmail(APIView):
+    serializer_class = ResendVerificationEmailSerializer
+    def post(self, request, *args, **kwargs):
+        user = User.objects.filter(email = request.data['email'])[0]
+        if not user:
+            raise serializers.ValidationError({'detail': 'account does not exist'})
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        token = get_tokens_for_user(user)
+        reset_email_message =  EmailMessage(
+            'email/email_reset_password.html',
+            {'token': token},
+            'kaka.mehrsam@gmail.com',
+            [user.email]
+        )
+        EmailThreading(reset_email_message).start()
+        return Response({'detail':"email sent successfully"},status=status.HTTP_201_CREATED)
+
+
+class ResetPasswordConfirm(APIView):
+    serializer_class = ResetPasswordSerializer
+    def post(self, request, token, *args, **kwargs):
+        'check token varify'
+        jwt_data = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+        user = User.objects.get(id= jwt_data['user_id'])
+        serializers = self.serializer_class(data=request.data)
+        serializers.is_valid(raise_exception=True)
+        user.set_password(request.data['new_password'])
+        user.save()
+        return Response('ok',status=status.HTTP_200_OK) 
+
 class ResetPasswordApiView(APIView):
     '''
     in this view we will send email to user to reset password
     unless we cant find user in database
     '''
-    pass
+    
 
 # reset password when user loded in
 

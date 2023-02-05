@@ -5,7 +5,9 @@ from .views.account import (UserRegistrationApiView,
                     UserLogoutView, 
                     VerifyEmailApiView,
                     ChangePasswordView,
-                    ResendEmailVerificationApiView)
+                    ResendEmailVerificationApiView,
+                    ResetPasswordEmail,
+                    ResetPasswordConfirm)
 from .views.profile import ProfileView, AdressApiView
 from rest_framework_simplejwt.views import (TokenRefreshView,)
 
@@ -18,6 +20,8 @@ urlpatterns = [
     path('change-password/', ChangePasswordView.as_view(), name='change_password'),
     path('email/verify/<str:token>', VerifyEmailApiView.as_view(), name='email_verify'),
     path('email/resend/', ResendEmailVerificationApiView.as_view(), name='resend_email'),
+    path('email/reset-password/', ResetPasswordEmail.as_view(), name='send_reset_password_email'),
+    path('reset-password/<str:token>', ResetPasswordConfirm.as_view(), name='reset_password'),
     
     # this part is ralet to profile
 
