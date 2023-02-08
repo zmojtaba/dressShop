@@ -8,9 +8,12 @@ import { NbSidebarService } from '@nebular/theme';
 })
 export class AppComponent {
   title = 'client';
+  ExpandedSidebar = true;
   constructor(private sidebarService: NbSidebarService) {
   }
   toggle() {
     this.sidebarService.toggle();
+    this.ExpandedSidebar = !this.ExpandedSidebar;
+    console.log('--------------', this.ExpandedSidebar)
   }
 }

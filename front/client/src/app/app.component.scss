@@ -1,6 +1,37 @@
-::ng-deep .nb-theme-default nb-layout-header nav {
-    padding: 0 ;
+@import "./styles/theme.scss";
+
+$sidbar_width :256px;
+nb-layout-header{
+    &.expanded{
+        margin-left: $side_bar_expanded_width;
+    }
+
+    &.collapsed{
+        margin-left: 0;
+    }
+    ::ng-deep nav{
+        padding: 0;
+        height: $header_navbar_height;
+        
+        app-header {
+            width: 100%;
+        }
+    }
+
+    mat-toolbar{
+        height: 100%;
+        background-color: $header_navbar_background;
+        color: $header_navbar_color
+    }
+
+    
 }
-app-header{
-    width: 100%;
+
+nb-sidebar{
+    &.expanded{
+        margin-top : -75px;
+    }
+    .collapsed{
+        $sidbar_width:0px; 
+    }
 }

@@ -9,28 +9,40 @@ import { LoginModel } from '../models/auth.model';
 })
 export class AuthService {
 
-  constructor(private http:HttpClient) { 
+  check_token_expire(token:string) {
+    const jwt_data = atob(token.split('.')[1]);
+  }
+
+  constructor(private http:HttpClient) {
+
     let refresh_token = localStorage.getItem('refresh_token');
     let access_token = localStorage.getItem('access_token');
     this.userIsLoggedIn.next(!!refresh_token);
-   }
+   
+  }
 
   loginResponseData = new BehaviorSubject<LoginModel>(null!)
   userIsLoggedIn = new BehaviorSubject<boolean>(false)
   logoutResponseData =new BehaviorSubject<string>('')
 
   signUpService(email:string, password:string, password1:string) {
-    return this.http.post("http://127.0.0.1:8000/account/api-vi/signup/", {
+    return this.http.post("http://localhost:8000/account/api-vi/sign-up/", {
       email: email,
       password: password, 
       password1: password1
     }).pipe(
-      catchError(this.handleError)
-    )
+        catchError(this.handleError),
+        tap( (data:any)=> {
+          localStorage.setItem('refresh_token', data['refresh_token'])
+          localStorage.setItem('access_token', data['access_token'])
+          }
+        )
+      
+      )
   }
 
   logInService(email:string, password:string){
-    return this.http.post("http://127.0.0.1:8000/account/api-vi/signin/", {
+    return this.http.post("http://127.0.0.1:8000/account/api-vi/sign-in/", {
       email: email,
       password: password
   }).pipe(
@@ -54,7 +66,7 @@ export class AuthService {
 }
   
   logOut(refresh:any) {
-    return this.http.post("http://127.0.0.1:8000/account/api-vi/logout/",{refresh}).pipe(
+    return this.http.post("http://127.0.0.1:8000/account/api-vi/sign-out/",{refresh}).pipe(
       tap( (data:any) => {
         this.userIsLoggedIn.next(false)
         this.logoutResponseData.next(data.detail)
@@ -64,7 +76,7 @@ export class AuthService {
   )}
   
   private handleError(errorRes:HttpErrorResponse){
-    let errorMessage = 'an unknown error occurred while signing up'
+    let errorMessage = 'an unknown error occurred'
     if (!errorRes.error){
       return throwError(errorMessage)
     }

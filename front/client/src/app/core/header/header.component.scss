@@ -1,0 +1,11 @@
+@import "../../styles/theme.scss";
+mat-toolbar{
+    height: 100%;
+    background-color: $header_navbar_background;
+    color: $header_navbar_color;
+    padding: 0;
+
+    nav{
+        width: 100%;
+    }
+}

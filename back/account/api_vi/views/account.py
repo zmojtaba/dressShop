@@ -16,13 +16,15 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
 import jwt
 from django.conf import settings
+from django.http import HttpResponseRedirect
 
 User = get_user_model()
 
 # this part should move to utils.py
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
-    return str(refresh)
+    access = refresh.access_token
+    return str(refresh), str(access)
 
 class EmailThreading(threading.Thread):
     def __init__(self, message):
@@ -41,14 +43,18 @@ class UserRegistrationApiView(GenericAPIView):
         serializer.save()
         # send email to created user
         user = User.objects.get(email = serializer.validated_data['email'])
-        refresh = get_tokens_for_user(user)
+        refresh_token, access_token = get_tokens_for_user(user)
         varification_email = EmailMessage('email/email_varification.html', 
-                                    {'token':refresh}, 
+                                    {'token':refresh_token}, 
                                     'kaka.mehrsam@gmail.com', 
                                     [user.email])
         
         EmailThreading(varification_email).start()
-        return Response({'detail':"sign up successfully"},status=status.HTTP_201_CREATED)
+        return Response({
+            'message':"sign up successfully",
+            'refresh_token' : refresh_token,
+            'access_token' : access_token,
+        },status=status.HTTP_201_CREATED)
 
 
 class ResendEmailVerificationApiView(APIView):
@@ -73,7 +79,7 @@ class VerifyEmailApiView(APIView):
         user = User.objects.get(id = jwt_data['user_id'])
         user.is_verified = True
         user.save()
-        return Response({'detail':'activation is complete'}, status=status.HTTP_200_OK)
+        return HttpResponseRedirect('http://localhost:4200/')
 
 
 

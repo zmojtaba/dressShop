@@ -1,38 +1,30 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <a class="navbar-brand" >clothShop</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-  
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" [routerLink]="['/']" routerLinkActive>Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" >Link</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Dropdown
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" >Action</a>
-            <a class="dropdown-item">Another action</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item">Something else here</a>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" >Disabled</a>
-        </li>
-      </ul>
-      <ul class="navbar-nav ms-auto" *ngIf="!userIslogedIn">
-        <li><a class="me-3" [routerLink]="[ 'sign-up' ]" routerLinkActive> Sign Up</a></li>
-        <li><a class="me-3" [routerLink]="[ 'login' ]" routerLinkActive> Login</a></li>
-      </ul>
-      <ul class="navbar-nav ms-auto" *ngIf="userIslogedIn">
-        <li><a class="me-3" (click)="onLogOut()" [routerLink]="['']" routerLinkActive> Sign Out</a></li>
-      </ul>
-    </div>
+<mat-toolbar>
+  <nav class="navbar navbar-expand-lg">
+      <span class="ms-2">clothShop</span>           
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a [routerLink]="['/']" routerLinkActive mat-button>Home</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ms-auto me-3">
+
+          <li><a class="me-2" [routerLink]="[ 'sign-up' ]" routerLinkActive> Sign Up</a></li>
+          
+          <li><a class="me-2" [routerLink]="[ 'login' ]" routerLinkActive> 
+              <mat-icon
+              class="example-icon"
+              aria-hidden="false"
+              aria-label="Login or Register">
+              account_circle
+              </mat-icon>
+          </a></li>
+          <li><a class="me-2" [routerLink]="['']" routerLinkActive> Sign Out</a></li>
+        </ul> 
+          
+      </div>
   </nav>
+  
+  
+
+</mat-toolbar>

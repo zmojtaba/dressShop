@@ -1,0 +1,11 @@
+@import "../../styles/theme.scss";
+
+form{
+
+    button{
+        background: $signup_submit_button_color;
+    }
+    small{
+        color:red
+    }
+}
