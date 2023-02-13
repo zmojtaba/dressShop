@@ -9,7 +9,7 @@ export class AuthInterceptorService implements HttpInterceptor {
 
   constructor(private authService:AuthService) { }
   intercept(request:HttpRequest<any>, next:HttpHandler){
-    if (!localStorage.getItem('refresh_token')){
+    if (!localStorage.getItem('refresh_token') || !localStorage.getItem('access_token')){
       console.log( '-----------------*****************---------------' ,request)
 
       return next.handle(request)

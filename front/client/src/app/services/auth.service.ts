@@ -8,22 +8,62 @@ import { LoginModel } from '../models/auth.model';
   providedIn: 'root'
 })
 export class AuthService {
-
-  check_token_expire(token:string) {
-    const jwt_data = atob(token.split('.')[1]);
-  }
-
-  constructor(private http:HttpClient) {
-
-    let refresh_token = localStorage.getItem('refresh_token');
-    let access_token = localStorage.getItem('access_token');
-    this.userIsLoggedIn.next(!!refresh_token);
-   
-  }
-
   loginResponseData = new BehaviorSubject<LoginModel>(null!)
   userIsLoggedIn = new BehaviorSubject<boolean>(false)
   logoutResponseData =new BehaviorSubject<string>('')
+  needToRefreshToken = new BehaviorSubject<boolean>(false)
+
+  check_token_expire(token:string) {
+
+    // JSON.parse convert string to json
+    const jwt_data: any = JSON.parse( atob(token.split('.')[1]) )
+    const now : number = Math.trunc( Date.now() / 1000 )
+
+    if ( jwt_data.exp - now > 0 ){
+      console.log('here is in next ')
+      return true
+
+    } else {
+      console.log(`here is in remove` )
+      return false
+
+    }
+
+  }
+
+  constructor(private http:HttpClient ) {
+    let refresh_token: string | null = localStorage.getItem('refresh_token')
+    let access_token: any = localStorage.getItem('access_token');
+    this.http.post('http://127.0.0.1:8000/account/api-vi/sign-in/refresh/', refresh_token).subscribe( (response)=>{
+      console.log(response)
+    } )
+
+    if ( access_token){
+      if (this.check_token_expire(access_token)){
+        this.userIsLoggedIn.next(!!access_token)
+        console.log('here is in constructor when access token exists')
+      } else {
+        localStorage.removeItem('access_token')
+        console.log('here is in constructor when access token does not exist')
+      }
+  
+    } else {
+      //  here we need to refresh the access token if refresh token exists
+      if (refresh_token){
+        console.log('here is in constructor when refresh token is exist and access token is not')
+        if (this.check_token_expire(refresh_token)){
+          this.needToRefreshToken.next(true);
+        }else{
+          localStorage.removeItem('refresh_token');
+        }
+      }
+    }
+
+   
+  }
+  renewAccessTokenService(refresh_token:string){
+    return this.http.post('http://127.0.0.1:8000/account/api-vi/sign-in/refresh/', refresh_token)
+  }
 
   signUpService(email:string, password:string, password1:string) {
     return this.http.post("http://localhost:8000/account/api-vi/sign-up/", {
@@ -74,6 +114,7 @@ export class AuthService {
         localStorage.removeItem('access_token')
     }),
   )}
+
   
   private handleError(errorRes:HttpErrorResponse){
     let errorMessage = 'an unknown error occurred'
