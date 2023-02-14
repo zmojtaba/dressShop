@@ -7,7 +7,7 @@ nb-layout-header{
     }
 
     &.collapsed{
-        margin-left: 0;
+        margin-left: 56px;
     }
     ::ng-deep nav{
         padding: 0;
@@ -28,10 +28,21 @@ nb-layout-header{
 }
 
 nb-sidebar{
+    margin-top: -77px;
+    mat-icon{
+        cursor: pointer;
+    }
+
     &.expanded{
         margin-top : -75px;
     }
     .collapsed{
         $sidbar_width:0px; 
+
     }
+
+    ::ng-deep .main-container{
+        margin-top: -77px;
+    }
+    
 }

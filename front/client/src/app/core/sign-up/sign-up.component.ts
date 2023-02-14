@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 import {AuthService} from '../../services/auth.service'
 import { FormGroup, FormControl,FormBuilder, Validators } from '@angular/forms';
 import {ChangeDetectorRef } from '@angular/core';
+import { SignUpModel } from 'src/app/models/auth.model';
 
 @Component({
   selector: 'app-sign-up',
@@ -21,8 +22,7 @@ export class SignUpComponent implements OnInit {
   signupSuccess: string = '';
   signUpForm: FormGroup;
   snippingLoading: boolean = false;
-
-
+  showPasswordStatus: boolean = false;
   showDetails: boolean=true;
 
   onStrengthChanged(strength: number) {
@@ -42,8 +42,12 @@ export class SignUpComponent implements OnInit {
    }
    
 
-   get signUpFormControls(): any {
+  get signUpFormControls(): any {
     return this.signUpForm['controls'];
+ }
+
+ OnPasswordToggle(){
+  this.showPasswordStatus = !this.showPasswordStatus;
  }
 
   onSignUp(form:any){
@@ -53,7 +57,7 @@ export class SignUpComponent implements OnInit {
     const password1 = form.value.password1
     
     this.authService.signUpService(email, password, password1)
-    .subscribe((data : any) => {
+    .subscribe((data : SignUpModel) => {
       this.snippingLoading = false
       this.signupSuccess = data['message']
     }, errorMessage => {

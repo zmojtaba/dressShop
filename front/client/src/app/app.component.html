@@ -3,9 +3,14 @@
     <app-header></app-header>
     </nb-layout-header>
     <nb-layout-footer>footer</nb-layout-footer>
-    <nb-layout-column>
-        <button nbButton status="success" size="tiny" (click)="toggle()">Toggle</button>
+    <nb-layout-column >
          <router-outlet></router-outlet> 
     </nb-layout-column>
-    <nb-sidebar> side bar </nb-sidebar>
+    
+    <nb-sidebar state="compacted"> 
+        <mat-icon (click)="toggle()">list</mat-icon>
+        <app-side-bar></app-side-bar>
+    </nb-sidebar>
+    <!-- if you want to change the side bar position to right  user code that is in bellow -->
+    <!-- <nb-sidebar state="compacted" right> side bar </nb-sidebar> -->
 </nb-layout>

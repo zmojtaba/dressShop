@@ -10,7 +10,7 @@ import { NbThemeModule , NbSidebarModule, NbLayoutModule, NbButtonModule } from 
 import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { AuthInterceptorService } from './services/auth-interceptor.service';
-
+import {MatIconModule} from '@angular/material/icon'
 @NgModule({
   declarations: [
     AppComponent
@@ -27,12 +27,13 @@ import { AuthInterceptorService } from './services/auth-interceptor.service';
     SharedModule,
     HttpClientModule,
     FormsModule,
+    MatIconModule
   ],
   providers: [   {
     provide: HTTP_INTERCEPTORS,
     useClass: AuthInterceptorService,
     multi: true
-   }, ],
+   }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

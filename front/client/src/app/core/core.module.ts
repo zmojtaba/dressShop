@@ -5,11 +5,16 @@ import { RouterModule } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from "@angular/material/icon";
+import { SideBarModule } from './side-bar/side-bar.module';
+import { SideBarComponent } from './side-bar/side-bar.component';
+
+
 
 
 @NgModule({
   declarations: [
-    HeaderComponent
+    HeaderComponent,
+
   ],
   imports: [
     CommonModule,
@@ -17,9 +22,12 @@ import { MatIconModule } from "@angular/material/icon";
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
+    SideBarModule,
+
   ],
   exports: [
-    HeaderComponent
+    HeaderComponent,
+    SideBarComponent
   ]
 })
 export class CoreModule { }

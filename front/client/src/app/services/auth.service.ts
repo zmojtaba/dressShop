@@ -2,16 +2,17 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpErrorResponse} from "@angular/common/http"
 import {  BehaviorSubject, throwError } from 'rxjs';
 import { catchError, take, tap } from 'rxjs/operators';
-import { LoginModel } from '../models/auth.model';
+import { LoginModel, SignUpModel } from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  loginResponseData = new BehaviorSubject<LoginModel>(null!)
-  userIsLoggedIn = new BehaviorSubject<boolean>(false)
-  logoutResponseData =new BehaviorSubject<string>('')
-  needToRefreshToken = new BehaviorSubject<boolean>(false)
+  loginResponseData   = new BehaviorSubject<LoginModel>(null!)
+  userIsLoggedIn      = new BehaviorSubject<boolean>(false)
+  logoutResponseData  = new BehaviorSubject<string>('')
+  needToRefreshToken  = new BehaviorSubject<boolean>(false)
+  signUpResponseData  = new BehaviorSubject<SignUpModel>(null!)
 
   check_token_expire(token:string) {
 
@@ -20,49 +21,72 @@ export class AuthService {
     const now : number = Math.trunc( Date.now() / 1000 )
 
     if ( jwt_data.exp - now > 0 ){
-      console.log('here is in next ')
       return true
 
     } else {
-      console.log(`here is in remove` )
       return false
 
     }
 
   }
 
-  constructor(private http:HttpClient ) {
-    let refresh_token: string | null = localStorage.getItem('refresh_token')
-    let access_token: any = localStorage.getItem('access_token');
-    this.http.post('http://127.0.0.1:8000/account/api-vi/sign-in/refresh/', refresh_token).subscribe( (response)=>{
-      console.log(response)
-    } )
+  sendNeedToRefreshMessage(access_token:any, refresh_token: any){
 
     if ( access_token){
+
       if (this.check_token_expire(access_token)){
+
         this.userIsLoggedIn.next(!!access_token)
-        console.log('here is in constructor when access token exists')
+        this.needToRefreshToken.next(false);
+
       } else {
+
         localStorage.removeItem('access_token')
-        console.log('here is in constructor when access token does not exist')
+        if (refresh_token){
+
+          if (this.check_token_expire(refresh_token)){
+
+            this.needToRefreshToken.next(true);
+          }
+
+        }
+
       }
   
     } else {
+
       //  here we need to refresh the access token if refresh token exists
       if (refresh_token){
-        console.log('here is in constructor when refresh token is exist and access token is not')
+
         if (this.check_token_expire(refresh_token)){
+
           this.needToRefreshToken.next(true);
         }else{
           localStorage.removeItem('refresh_token');
+          this.needToRefreshToken.next(false);
         }
       }
     }
 
+
+  }
+
+
+
+  constructor(private http:HttpClient ) {
+    let refresh_token: string | null = localStorage.getItem('refresh_token')
+    let access_token: any = localStorage.getItem('access_token');
+
+    this.sendNeedToRefreshMessage(access_token, refresh_token)
    
   }
+
+
   renewAccessTokenService(refresh_token:string){
-    return this.http.post('http://127.0.0.1:8000/account/api-vi/sign-in/refresh/', refresh_token)
+    return this.http.post('http://127.0.0.1:8000/account/api-vi/sign-in/refresh/',
+     {
+      refresh :refresh_token
+    })
   }
 
   signUpService(email:string, password:string, password1:string) {
@@ -73,8 +97,10 @@ export class AuthService {
     }).pipe(
         catchError(this.handleError),
         tap( (data:any)=> {
+          console.log('---------++++++++++', data)
           localStorage.setItem('refresh_token', data['refresh_token'])
           localStorage.setItem('access_token', data['access_token'])
+          this.userIsLoggedIn.next(true)
           }
         )
       

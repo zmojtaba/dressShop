@@ -11,6 +11,7 @@ import { PasswordStrengthComponent } from './password-strength/password-strength
 import { MatPasswordStrengthModule } from '@angular-material-extensions/password-strength';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from "@angular/material/form-field";
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { MatFormFieldModule } from "@angular/material/form-field";
     PasswordStrengthMeterModule.forRoot(),
     MatPasswordStrengthModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatSlideToggleModule
   ]
 })
 export class SignUpModule { }

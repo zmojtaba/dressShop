@@ -10,3 +10,12 @@ export class LoginModel{
             return this.refresh
         }
 }
+
+export class SignUpModel {
+    constructor(
+        public message:string,
+        private refresh_token : string,
+        private access_token : string,
+
+    ){}
+}
