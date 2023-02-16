@@ -63,8 +63,11 @@ export class AuthService {
           this.needToRefreshToken.next(true);
         }else{
           localStorage.removeItem('refresh_token');
+          localStorage.removeItem('user_email')
           this.needToRefreshToken.next(false);
         }
+      }else{
+        localStorage.removeItem('user_email')
       }
     }
 
@@ -97,9 +100,9 @@ export class AuthService {
     }).pipe(
         catchError(this.handleError),
         tap( (data:any)=> {
-          console.log('---------++++++++++', data)
           localStorage.setItem('refresh_token', data['refresh_token'])
           localStorage.setItem('access_token', data['access_token'])
+          localStorage.setItem('user_email', email)
           this.userIsLoggedIn.next(true)
           }
         )
@@ -123,6 +126,7 @@ export class AuthService {
         +resData.access_exp )
       localStorage.setItem('refresh_token', resData.refresh)
       localStorage.setItem('access_token', resData.access)
+      localStorage.setItem('user_email', email)
 
       this.loginResponseData.next(loginResponse)
       this.userIsLoggedIn.next(true)
@@ -138,6 +142,7 @@ export class AuthService {
         this.logoutResponseData.next(data.detail)
         localStorage.removeItem('refresh_token')
         localStorage.removeItem('access_token')
+        localStorage.removeItem('user_email')
     }),
   )}
 

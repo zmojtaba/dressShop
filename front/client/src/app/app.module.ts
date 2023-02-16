@@ -27,7 +27,7 @@ import {MatIconModule} from '@angular/material/icon'
     SharedModule,
     HttpClientModule,
     FormsModule,
-    MatIconModule
+    MatIconModule,
   ],
   providers: [   {
     provide: HTTP_INTERCEPTORS,

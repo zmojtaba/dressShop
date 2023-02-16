@@ -42,10 +42,6 @@ export class SignUpComponent implements OnInit {
    }
    
 
-  get signUpFormControls(): any {
-    return this.signUpForm['controls'];
- }
-
  OnPasswordToggle(){
   this.showPasswordStatus = !this.showPasswordStatus;
  }

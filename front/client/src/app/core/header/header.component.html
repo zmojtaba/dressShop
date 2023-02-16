@@ -7,24 +7,30 @@
             <a [routerLink]="['/']" routerLinkActive mat-button>Home</a>
           </li>
         </ul>
-        <ul class="navbar-nav ms-auto me-3">
+        <ul class="navbar-nav ms-auto me-3" *ngIf="userIslogedIn">
 
-          <li><a class="me-2" [routerLink]="[ 'sign-up' ]" routerLinkActive> Sign Up</a></li>
+        </ul>
           
-          <li><a class="me-2" [routerLink]="[ 'login' ]" routerLinkActive> 
-              <mat-icon
-              class="example-icon"
-              aria-hidden="false"
-              aria-label="Login or Register">
-              account_circle
-              </mat-icon>
-          </a></li>
-          <li><a class="me-2" [routerLink]="['']" routerLinkActive> Sign Out</a></li>
-        </ul> 
+          <ul class="navbar-nav ms-auto me-3" *ngIf="!userIslogedIn">
+
+            <li><a class="me-2" [routerLink]="[ 'sign-up' ]" routerLinkActive> Sign Up</a></li>
+            <li><a class="me-2" [routerLink]="[ 'login' ]" routerLinkActive> Sign In</a></li>
+        </ul>
+
+
+        <div class="dropdown" *ngIf="userIslogedIn">
+          <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">{{userEmail}}</a>
+          <div class="dropdown-menu">
+              <a [routerLink]="['']" (click)="onLogOut()" class="dropdown-item">Sign Out</a>
+              <a href="#" class="dropdown-item">Profile</a>
+          </div>
+      </div>
+          
+
+          
+         
           
       </div>
   </nav>
-  
-  
 
 </mat-toolbar>

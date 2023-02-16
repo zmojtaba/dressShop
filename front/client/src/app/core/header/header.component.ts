@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { LoginModel } from 'src/app/models/auth.model';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -10,6 +9,7 @@ import { AuthService } from 'src/app/services/auth.service';
 export class HeaderComponent implements OnInit {
   constructor(private authService: AuthService){}
   userIslogedIn: boolean = false;
+  userEmail: string | null ;
 
 
   onLogOut(){
@@ -21,6 +21,9 @@ export class HeaderComponent implements OnInit {
 
 
       this.authService.userIsLoggedIn.subscribe( (data:boolean) => this.userIslogedIn = data)
+
+      this.userEmail = localStorage.getItem('user_email')
+
   }
 
 }

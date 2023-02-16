@@ -17,16 +17,15 @@
         <label for="email"> email</label>
         <input type="email" class="form-control mt-1" id="email" name="email" placeholder="email@example.com" formControlName="email" email>
 
-        <div *ngIf="signUpFormControls.email.errors && signUpFormControls.email.touched" >
-
+        <div *ngIf="signUpForm.controls.email.errors && signUpForm.controls.email.touched" >
           <small> enter valid email</small>
         </div>
-        {{showPasswordStatus}}
+
         <mat-slide-toggle
           class="mt-3 mb-3"
           (click)="OnPasswordToggle()"
           color="primary">
-        show password status
+        <small>show password status</small>
       </mat-slide-toggle>
 
         <mat-form-field class="mt-1" appearance="outline" style="width: 100%" [color]="passwordComponent.color">
@@ -58,11 +57,15 @@
 
 
         <label for="password1"> password1</label>
-        <input type="password" class="form-control mt-1" id="password1" formControlName="password1">
+        <input type="password" class="form-control mt-1" id="password1" formControlName="password1" #password1>
         
+        <div *ngIf="signUpForm.controls.password1.touched 
+                    && signUpForm.controls.password.touched 
+                    && password.value !== password1.value" >
+              <small> password does not match </small>
+        </div>
 
-
-        <button type="submit" class="btn mt-1" [disabled]="!signUpForm.valid">Submit</button>
+        <button type="submit" class="btn mt-1" [disabled]="!signUpForm.valid || password.value !== password1.value ">Submit</button>
     </form>
     <mat-spinner class="col-xs-12 col-md-6 col-md-offser-3" *ngIf="snippingLoading"></mat-spinner>
   </ng-container>
