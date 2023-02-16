@@ -1,10 +1,15 @@
 <div class="container" >
-    <div class="alert alert-success col-md-offser-3" *ngIf="loginData && userIsLoggedIn">
-        {{loginData.email}}
+    <div class="alert alert-success col-md-offser-3" *ngIf="userIsLoggedIn && loginMessage ">
+        <p>{{loginMessage}}</p>
     </div>
 
-    <div class="alert alert-success col-md-offser-3" *ngIf="logoutData && !userIsLoggedIn" >
-        {{logoutData}}
+    <div class="alert alert-success col-md-offser-3" *ngIf="!userIsLoggedIn && logoutMessage" >
+        {{logoutMessage}}
+    </div>
 
+    <div class="alert alert-success col-md-offser-3" *ngIf="userIsLoggedIn && signUpMessage" >
+        {{signUpMessage}}
+        <small class="text-success">an email has sent to your email account please check it for activating your account</small>
     </div>
 </div>
+

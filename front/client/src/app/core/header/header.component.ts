@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SimpleChanges } from '@angular/core';
+import { Router, Routes } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -7,14 +8,16 @@ import { AuthService } from 'src/app/services/auth.service';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
-  constructor(private authService: AuthService){}
+  constructor(private authService: AuthService,
+              private router: Router){}
   userIslogedIn: boolean = false;
   userEmail: string | null ;
 
 
   onLogOut(){
     const refresh_token = localStorage.getItem('refresh_token')
-    this.authService.logOut(refresh_token).subscribe()    
+    this.authService.logOut(refresh_token).subscribe()
+    this.router.navigate([''])    
   }
 
   ngOnInit(): void {
@@ -24,6 +27,9 @@ export class HeaderComponent implements OnInit {
 
       this.userEmail = localStorage.getItem('user_email')
 
+  }
+  ngOnChanges(changes: SimpleChanges) {
+    this.userEmail = localStorage.getItem('user_email') 
   }
 
 }

@@ -12,7 +12,7 @@ export class AuthService {
   userIsLoggedIn      = new BehaviorSubject<boolean>(false)
   logoutResponseData  = new BehaviorSubject<string>('')
   needToRefreshToken  = new BehaviorSubject<boolean>(false)
-  signUpResponseData  = new BehaviorSubject<SignUpModel>(null!)
+  signUpMessage  = new BehaviorSubject<string>('')
 
   check_token_expire(token:string) {
 
@@ -104,6 +104,7 @@ export class AuthService {
           localStorage.setItem('access_token', data['access_token'])
           localStorage.setItem('user_email', email)
           this.userIsLoggedIn.next(true)
+          this.signUpMessage.next(data['message'])
           }
         )
       

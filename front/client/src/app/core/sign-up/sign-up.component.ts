@@ -4,6 +4,7 @@ import {AuthService} from '../../services/auth.service'
 import { FormGroup, FormControl,FormBuilder, Validators } from '@angular/forms';
 import {ChangeDetectorRef } from '@angular/core';
 import { SignUpModel } from 'src/app/models/auth.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sign-up',
@@ -12,7 +13,8 @@ import { SignUpModel } from 'src/app/models/auth.model';
 })
 export class SignUpComponent implements OnInit {
   constructor(public authService: AuthService,private fb: FormBuilder,
-              private cdref: ChangeDetectorRef          
+              private cdref: ChangeDetectorRef,
+              private router: Router,          
     ){}
 
   ngAfterContentChecked() {
@@ -56,6 +58,7 @@ export class SignUpComponent implements OnInit {
     .subscribe((data : SignUpModel) => {
       this.snippingLoading = false
       this.signupSuccess = data['message']
+      this.router.navigate(['/'])
     }, errorMessage => {
       this.snippingLoading = false
       this.signupError = errorMessage

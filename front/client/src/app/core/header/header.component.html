@@ -21,7 +21,7 @@
         <div class="dropdown" *ngIf="userIslogedIn">
           <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">{{userEmail}}</a>
           <div class="dropdown-menu">
-              <a [routerLink]="['']" (click)="onLogOut()" class="dropdown-item">Sign Out</a>
+              <a (click)="onLogOut()" class="dropdown-item">Sign Out</a>
               <a href="#" class="dropdown-item">Profile</a>
           </div>
       </div>

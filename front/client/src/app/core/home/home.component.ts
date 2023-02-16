@@ -1,4 +1,4 @@
-import { Component, OnInit,OnChanges ,OnDestroy } from '@angular/core';
+import { Component, OnInit,OnChanges ,OnDestroy, SimpleChanges } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { LoginModel } from 'src/app/models/auth.model';
 import { Subscription, take } from 'rxjs';
@@ -7,35 +7,54 @@ import { Subscription, take } from 'rxjs';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit,OnChanges,OnDestroy {
+export class HomeComponent implements OnInit,OnDestroy {
   logMessage :string = 'not log in'
+  loginMessage :string;
   loginSubscription :Subscription = new Subscription()
   logoutSubcription: Subscription = new Subscription()
-  loginData: LoginModel;
-  logoutData: string;
+  logoutMessage: string;
   userIsLoggedIn :boolean;
+  signUpMessage: string;
   constructor(private authService: AuthService){  }
 
   ngOnInit(): void {
     this.loginSubscription =  this.authService.loginResponseData.subscribe(data => {
-      this.loginData = data;
+      if (data){
+      this.loginMessage = 'logged in successfully';
+      setTimeout( ()=>{
+        this.loginMessage = ''
+      } , 3000)}
     })
 
     this.authService.userIsLoggedIn.subscribe( (data)=>{
       this.userIsLoggedIn = data
     })
 
-    this.logoutSubcription = this.authService.logoutResponseData.pipe(
-      take(1)
-    )
-    .subscribe( (data) => {
-      this.logoutData = data
+    this.logoutSubcription = this.authService.logoutResponseData.subscribe( (data) => {
+      if (data){
+        this.logoutMessage = data
+        setTimeout( ()=>{
+          this.logoutMessage = ''
+        } , 3000)
+      }
     })
+
+    this.authService.signUpMessage.subscribe( (data) => {
+      if (data){
+        this.signUpMessage = data
+        setTimeout( ()=>{
+          this.signUpMessage = ''
+        } , 3000)
+      }
+      
+  })
 
   }
 
-  ngOnChanges() {
-
+  ngOnChanges(changes: SimpleChanges) {
+    if (this.userIsLoggedIn){
+      console.log('*************', this.userIsLoggedIn)
+    }
   }
 
   ngOnDestroy() {
