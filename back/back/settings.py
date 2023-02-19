@@ -1,10 +1,14 @@
 from pathlib import Path
 import os
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-x%$fpgq6*!=u&swydn)p^bs0xlewge0(r^l_1d*8_itk54wno^'
+SECRET_KEY = env('SECRET_KEY')
 
 DEBUG = True
 
@@ -70,14 +74,13 @@ AUTH_USER_MODEL = 'account.User'
 DATABASES = {
 'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': "dressShopClient",
-        'USER': "postgres",
-        'PASSWORD': "1",
+        'NAME': env('DATABASE_NAME'),
+        'USER': env('DATABASE_USER'),
+        'PASSWORD': env('DATABASE_PASSWORD'),
         'HOST': "localhost",
         'PORT': "5432",
     }
 }
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -154,8 +157,8 @@ SIMPLE_JWT = {
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'kaka.mehrsam@gmail.com'
-EMAIL_HOST_PASSWORD = 'hezcqeukjbgnomjq'
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
