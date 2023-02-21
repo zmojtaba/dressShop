@@ -1,6 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { NbSidebarService } from '@nebular/theme';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 import { AuthService } from './services/auth.service';
 
 @Component({
@@ -17,9 +17,12 @@ export class AppComponent implements OnInit, OnDestroy {
     private authService : AuthService,
   ){}
   ngOnInit() {
-    this.needToRefreshSubscription =  this.authService.needToRefreshToken.subscribe(
+    this.needToRefreshSubscription =  this.authService.needToRefreshToken.pipe(
+      take(1)
+    ).subscribe(
       (boolean: boolean)=>{
         if (boolean){
+          console.log('============needToRefreshSubscription=========')
           const refresh_token : any = localStorage.getItem('refresh_token');
           this.authService.renewAccessTokenService(refresh_token).subscribe(
             (response:any) =>{
@@ -34,6 +37,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(){
     this.needToRefreshSubscription.unsubscribe()
+  }
+  ngOnChanges(changes: SimpleChanges) {
+    if (localStorage.getItem('access_token')){
+      this.needToRefreshSubscription.unsubscribe()
+    }
   }
 
   toggle() {

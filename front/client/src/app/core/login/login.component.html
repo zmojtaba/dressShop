@@ -1,17 +1,38 @@
 <div class="col-xs-12 col-md-6 col-md-offser-3" >
     <ng-container *ngIf="loginError" >
-        <div class="alert alert-danger" role="alert"  *ngFor="let err of loginError" >
+        <div class="alert alert-danger error" role="alert"  *ngFor="let err of loginError" >
             {{err}}
           </div>
-        </ng-container> 
-    <form #logInForm="ngForm" (ngSubmit)="onLogin(logInForm)" *ngIf="!loadingSpinner" >
+    </ng-container> 
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin(loginForm)" *ngIf="!loadingSpinner" >
         <div class="form-group">
             <label for="email">email</label>
-            <input type="email" id="email" class="form-control" ngModel name="email" email required>
+            <input type="email"
+                id="email"
+                placeholder="email@gmail.com" 
+                class="form-control" 
+                [ngClass]="{'invalid' : (loginForm.controls.email.errors && loginForm.controls.email.touched) ,'valid': (!loginForm.controls.email.errors && !loginForm.controls.email.pristine)}" 
+                name="email" 
+                formControlName="email">
+
+            <div class="error" >
+                <small *ngIf="!loginForm.controls.email.value && !loginForm.controls.email.pristine "> email is required!</small>
+                <small *ngIf="loginForm.controls.email.touched && loginForm.controls.email.errors && loginForm.controls.email.value">please enter valid email address!</small>
+            </div>
+            {{loginForm.controls.email.pristine}}
+
             <label for="password">password</label>
-            <input type="text" id="password" class="form-control" [ngClass]="{'ng-invalid' :!logInForm.valid  }" ngModel name="password" required>
+            <input type="text" 
+                id="password" 
+                class="form-control"
+                [class]="{'invalid' : (loginForm.controls.password.errors && loginForm.controls.password.touched) ,'valid': (!loginForm.controls.password.errors && !loginForm.controls.password.pristine)}" 
+                name="password" 
+                formControlName="password">
+                <div class="error" >
+                    <small *ngIf="!loginForm.controls.password.value && loginForm.controls.password.touched" > password is required! </small>
+                </div>
             <small> <a> forgot password? </a> </small><br>
-            <button type="submit" class="btn btn-primary mt-1" [disabled]="!logInForm.valid" > Log in </button>
+            <button type="submit" mat-button color="primary" [disabled]="!loginForm.valid">LogIn</button>
         </div>
     </form>
     <mat-spinner *ngIf="loadingSpinner" ></mat-spinner>

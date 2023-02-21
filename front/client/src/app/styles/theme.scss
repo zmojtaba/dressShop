@@ -1,5 +1,24 @@
+@font-face {
+    font-family: 'GreatVibes';
+    src: url('../../assets/fonts/GreatVibes-Regular.ttf');
+  }
+$brand_font_family: 'GreatVibes';
+$brand_font_size: 2.1rem;
 $side_bar_expanded_width:256px;
 $header_navbar_height : 3rem;
-$header_navbar_background : #c38d9e;
+$header_font_color: #ffff;
+
+$header_navbar_background : #748DA6;
 $header_navbar_color: #536066c7;
-$signup_submit_button_color: #c38d9e
+
+$side-bar_background_color: #9CB4CC;
+
+$button_submit_color: #8ecae6;
+
+$input_success_border_color: #588157;
+$input_wrong_border_color: #e76f51;
+$input_border_color: #ced4da;
+
+$font_color_light : #ffff;
+
+// D3CEDF, F2D7D9

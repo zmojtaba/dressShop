@@ -1,18 +1,20 @@
-import { Injectable } from '@angular/core';
+import { Injectable, SimpleChanges } from '@angular/core';
 import {HttpClient, HttpErrorResponse} from "@angular/common/http"
 import {  BehaviorSubject, throwError } from 'rxjs';
 import { catchError, take, tap } from 'rxjs/operators';
 import { LoginModel, SignUpModel } from '../models/auth.model';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  apiUrl              = environment.apiUrl 
   loginResponseData   = new BehaviorSubject<LoginModel>(null!)
   userIsLoggedIn      = new BehaviorSubject<boolean>(false)
   logoutResponseData  = new BehaviorSubject<string>('')
   needToRefreshToken  = new BehaviorSubject<boolean>(false)
-  signUpMessage  = new BehaviorSubject<string>('')
+  signUpMessage       = new BehaviorSubject<string>('')
 
   check_token_expire(token:string) {
 
@@ -40,8 +42,8 @@ export class AuthService {
         this.needToRefreshToken.next(false);
 
       } else {
-
         localStorage.removeItem('access_token')
+        
         if (refresh_token){
 
           if (this.check_token_expire(refresh_token)){
@@ -84,16 +86,15 @@ export class AuthService {
    
   }
 
-
   renewAccessTokenService(refresh_token:string){
-    return this.http.post('http://127.0.0.1:8000/account/api-vi/sign-in/refresh/',
+    return this.http.post(this.apiUrl + '/account/api-vi/sign-in/refresh/',
      {
       refresh :refresh_token
     })
   }
 
   signUpService(email:string, password:string, password1:string) {
-    return this.http.post("http://localhost:8000/account/api-vi/sign-up/", {
+    return this.http.post(this.apiUrl + "/account/api-vi/sign-up/", {
       email: email,
       password: password, 
       password1: password1
@@ -112,7 +113,7 @@ export class AuthService {
   }
 
   logInService(email:string, password:string){
-    return this.http.post("http://127.0.0.1:8000/account/api-vi/sign-in/", {
+    return this.http.post(this.apiUrl + "/account/api-vi/sign-in/", {
       email: email,
       password: password
   }).pipe(
@@ -137,7 +138,7 @@ export class AuthService {
 }
   
   logOut(refresh:any) {
-    return this.http.post("http://127.0.0.1:8000/account/api-vi/sign-out/",{refresh}).pipe(
+    return this.http.post(this.apiUrl + "/account/api-vi/sign-out/",{refresh}).pipe(
       tap( (data:any) => {
         this.userIsLoggedIn.next(false)
         this.logoutResponseData.next(data.detail)

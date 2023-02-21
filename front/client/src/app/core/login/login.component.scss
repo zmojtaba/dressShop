@@ -1,15 +1,31 @@
+@import "../../styles/theme.scss";
 ::ng-deep nb-layout-column{
-
     .form-control:focus {
-            box-shadow: none
+        box-shadow: none;
+        &.valid{
+            border-color: $input_success_border_color;
+        }
     }
-    .ng-invalid {
-        border-color: rgb(223, 62, 62)
+    .invalid{
+        border-color: $input_wrong_border_color;
     }
-    .ng-valid{
-        border-color: rgb(42, 204, 71)
+    .valid, .valid:focus{
+        border-color: $input_success_border_color;
+    }
+    .error{
+        background:$input_wrong_border_color ;
+        margin: 3px 0;
+        border-radius: 4px;
+        color: $font_color_light;
+
+        small{
+            padding: 13px;
+            
+        };
     }
 
+}
 
-
+button{
+    background: $button_submit_color;
 }

@@ -23,13 +23,16 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
 
 
-      this.authService.userIsLoggedIn.subscribe( (data:boolean) => this.userIslogedIn = data)
-
-      this.userEmail = localStorage.getItem('user_email')
+      this.authService.userIsLoggedIn.subscribe( (data:boolean) => {
+        this.userIslogedIn = data
+      if (this.userIslogedIn = data)  {this.userEmail = localStorage.getItem('user_email')}
+      })
 
   }
   ngOnChanges(changes: SimpleChanges) {
-    this.userEmail = localStorage.getItem('user_email') 
+    if (this.userIslogedIn){
+      console.log('*************', this.userIslogedIn)
+    }
   }
 
 }

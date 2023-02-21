@@ -28,6 +28,7 @@ nb-layout-header{
 }
 
 nb-sidebar{
+    background: $side-bar_background_color;
     margin-top: -77px;
     mat-icon{
         cursor: pointer;

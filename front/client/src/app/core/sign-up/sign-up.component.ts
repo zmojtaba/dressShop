@@ -12,7 +12,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./sign-up.component.scss']
 })
 export class SignUpComponent implements OnInit {
-  constructor(public authService: AuthService,private fb: FormBuilder,
+  constructor(public authService: AuthService,
+              private fb: FormBuilder,
               private cdref: ChangeDetectorRef,
               private router: Router,          
     ){}
@@ -36,7 +37,7 @@ export class SignUpComponent implements OnInit {
       email: ['', [
         Validators.required, 
         Validators.email, 
-        Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")
+        Validators.pattern("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-z]{2,7}$")
       ]],
       password: ['', [Validators.required, Validators.minLength(8) ]],
       password1: ['', [Validators.required, Validators.minLength(8)]],
