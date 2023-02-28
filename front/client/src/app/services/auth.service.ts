@@ -1,7 +1,7 @@
 import { Injectable, SimpleChanges } from '@angular/core';
 import {HttpClient, HttpErrorResponse} from "@angular/common/http"
 import {  BehaviorSubject, throwError } from 'rxjs';
-import { catchError, take, tap } from 'rxjs/operators';
+import { catchError, map, take, tap } from 'rxjs/operators';
 import { LoginModel, SignUpModel } from '../models/auth.model';
 import { environment } from 'src/environments/environment';
 
@@ -148,9 +148,32 @@ export class AuthService {
     }),
   )}
 
+  sendForgotPasswordEmail(email: string ){
+    return this.http.post(this.apiUrl + "/account/api-vi/email/reset-password/", {
+      email: email
+    }).pipe(
+      catchError(this.handleError),
+      map( (data: any) => {
+        return data.detail
+      } )
+    )
+  }
+
+  changeForgottenPassword (token: string, newPassword: string, newPasswordConfirm: string) {
+    return this.http.post(this.apiUrl + `/account/api-vi/reset-password/${token}`,{
+      new_password: newPassword,
+      new_password_confirm: newPasswordConfirm
+    }).pipe(
+      catchError(this.handleError),
+      map( (data:any) => data.detail )
+    )
+  
+  }
+
   
   private handleError(errorRes:HttpErrorResponse){
     let errorMessage = 'an unknown error occurred'
+    console.log('-----------',errorRes)
     if (!errorRes.error){
       return throwError(errorMessage)
     }
@@ -162,6 +185,9 @@ export class AuthService {
     }
     if (errorRes.error['password1']){
       errorMessage=errorRes.error['password1']
+    }
+    if (errorRes.error['detail']){
+      errorMessage=errorRes.error['detail']
     }
     return throwError(errorMessage)
   }

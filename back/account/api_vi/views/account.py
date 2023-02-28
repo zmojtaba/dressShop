@@ -117,15 +117,16 @@ class ChangePasswordView(APIView):
 class ResetPasswordEmail(APIView):
     serializer_class = ResendVerificationEmailSerializer
     def post(self, request, *args, **kwargs):
-        user = User.objects.filter(email = request.data['email'])[0]
+        user = User.objects.filter(email = request.data['email'])
         if not user:
             raise serializers.ValidationError({'detail': 'account does not exist'})
+        user = user[0]
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         token = get_tokens_for_user(user)
         reset_email_message =  EmailMessage(
             'email/email_reset_password.html',
-            {'token': token},
+            {'token': token[0]},
             'kaka.mehrsam@gmail.com',
             [user.email]
         )
@@ -143,7 +144,7 @@ class ResetPasswordConfirm(APIView):
         serializers.is_valid(raise_exception=True)
         user.set_password(request.data['new_password'])
         user.save()
-        return Response('ok',status=status.HTTP_200_OK) 
+        return Response({ 'detail': 'Password Has Changed Successfully'},status=status.HTTP_200_OK) 
 
 class ResetPasswordApiView(APIView):
     '''

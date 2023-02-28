@@ -13,7 +13,7 @@
         border-color: $input_success_border_color;
     }
     .error{
-        background:$input_wrong_border_color ;
+        background:$warning_background ;
         margin: 3px 0;
         border-radius: 4px;
         color: $font_color_light;

@@ -16,25 +16,27 @@
                 formControlName="email">
 
             <div class="error" >
-                <small *ngIf="!loginForm.controls.email.value && !loginForm.controls.email.pristine "> email is required!</small>
+                <small *ngIf="!loginForm.controls.email.value && loginForm.controls.email.touched "> email is required!</small>
                 <small *ngIf="loginForm.controls.email.touched && loginForm.controls.email.errors && loginForm.controls.email.value">please enter valid email address!</small>
             </div>
-            {{loginForm.controls.email.pristine}}
 
             <label for="password">password</label>
             <input type="text" 
                 id="password" 
                 class="form-control"
+                placeholder="password"
                 [class]="{'invalid' : (loginForm.controls.password.errors && loginForm.controls.password.touched) ,'valid': (!loginForm.controls.password.errors && !loginForm.controls.password.pristine)}" 
                 name="password" 
                 formControlName="password">
                 <div class="error" >
                     <small *ngIf="!loginForm.controls.password.value && loginForm.controls.password.touched" > password is required! </small>
                 </div>
-            <small> <a> forgot password? </a> </small><br>
+            <small> <a [routerLink]="['./forgot-password']"> forgot password? </a> </small><br>
             <button type="submit" mat-button color="primary" [disabled]="!loginForm.valid">LogIn</button>
         </div>
     </form>
-    <mat-spinner *ngIf="loadingSpinner" ></mat-spinner>
+    <mat-spinner  *ngIf="loadingSpinner" ></mat-spinner>
 
 </div>
+
+<router-outlet ></router-outlet>
