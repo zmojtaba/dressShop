@@ -1,15 +1,18 @@
 <div class="container" >
-    <div class="alert alert-success col-md-offser-3" *ngIf="userIsLoggedIn && loginMessage ">
+    <div class="alert alert-success col-md-offser-3 success" *ngIf="userIsLoggedIn && loginMessage ">
         <p>{{loginMessage}}</p>
     </div>
 
-    <div class="alert alert-success col-md-offser-3" *ngIf="!userIsLoggedIn && logoutMessage" >
-        {{logoutMessage}}
+    <div class="alert alert-success col-md-offser-3 success" *ngIf="!userIsLoggedIn && logoutMessage" >
+        <p>{{logoutMessage}}</p>
     </div>
-
-    <div class="alert alert-success col-md-offser-3" *ngIf="userIsLoggedIn && signUpMessage" >
-        {{signUpMessage}}
-        <small class="text-success">an email has sent to your email account please check it for activating your account</small>
+    <div *ngIf="!loadingSpinner">
+        <div class="alert alert-success col-md-offser-3 success" *ngIf="userIsLoggedIn && signUpMessage" >
+            <p >{{signUpMessage}}</p>
+            <small >Email has sent to your email account please check it for activating your account. If not click <a (click)="onResendEmail()">here</a>  to resend verification email. </small>
+            <small  *ngIf="resendMessage">{{resendMessage}}</small>
+        </div>
     </div>
+    <mat-spinner  *ngIf="loadingSpinner" ></mat-spinner>
 </div>
 

@@ -9,30 +9,15 @@ from rest_framework import status, serializers
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import (TokenObtainPairView,TokenBlacklistView)
 from rest_framework.views import APIView
-from rest_framework_simplejwt.tokens import RefreshToken
-import threading
 from mail_templated import EmailMessage
-from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
 import jwt
 from django.conf import settings
 from django.http import HttpResponseRedirect
 
+from .utils import (customRefreshToken, EmailThreading, get_tokens_for_user, get_token_for_email_verification )
+
 User = get_user_model()
-
-# this part should move to utils.py
-def get_tokens_for_user(user):
-    refresh = RefreshToken.for_user(user)
-    access = refresh.access_token
-    return str(refresh), str(access)
-
-class EmailThreading(threading.Thread):
-    def __init__(self, message):
-        threading.Thread.__init__(self)
-        self.message = message
-        
-    def run(self):
-        self.message.send()
 
 class UserRegistrationApiView(GenericAPIView):
     serializer_class = UserRegistrationSerializer
@@ -43,13 +28,14 @@ class UserRegistrationApiView(GenericAPIView):
         serializer.save()
         # send email to created user
         user = User.objects.get(email = serializer.validated_data['email'])
+        verification_refresh_token, verification_access_token = get_token_for_email_verification(user)
         refresh_token, access_token = get_tokens_for_user(user)
-        varification_email = EmailMessage('email/email_varification.html', 
-                                    {'token':refresh_token}, 
+        verification_email = EmailMessage('email/email_varification.html', 
+                                    {'token':verification_refresh_token}, 
                                     'kaka.mehrsam@gmail.com', 
                                     [user.email])
         
-        EmailThreading(varification_email).start()
+        EmailThreading(verification_email).start()
         return Response({
             'message':"sign up successfully",
             'refresh_token' : refresh_token,
@@ -61,10 +47,13 @@ class ResendEmailVerificationApiView(APIView):
     serializer_class = ResendVerificationEmailSerializer
 
     def post(self, request, *args, **kwargs):
-        user = User.objects.filter(email = request.data['email'])[0]
+        try :
+            user = User.objects.filter(email = request.data['email'])[0]
+        except:
+            raise serializers.ValidationError({'detail':'Email required'})
         if not user:
             return Response({'detail':'user does not exist'}, status=status.HTTP_404_NOT_FOUND)
-        refresh = get_tokens_for_user(user)
+        refresh = get_token_for_email_verification(user)[0]
         varification_email = EmailMessage('email/email_varification.html', 
                                     {'token':refresh}, 
                                     'kaka.mehrsam@gmail.com', 
@@ -137,13 +126,22 @@ class ResetPasswordEmail(APIView):
 class ResetPasswordConfirm(APIView):
     serializer_class = ResetPasswordSerializer
     def post(self, request, token, *args, **kwargs):
-        'check token varify'
-        jwt_data = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+
+        try:
+            jwt_data = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+        except jwt.exceptions.ExpiredSignatureError:
+            raise serializers.ValidationError({'detail':"token expired"}, code=status.HTTP_408_REQUEST_TIMEOUT)
+        except jwt.exceptions.InvalidSignatureError:
+            raise serializers.ValidationError({'detail':'token has invalid signature'}, code=status.HTTP_403_FORBIDDEN)
+        except jwt.exceptions.DecodeError:
+            raise serializers.ValidationError({'detail':'token has Invalid payload padding'}, code=status.HTTP_403_FORBIDDEN)
+
         user = User.objects.get(id= jwt_data['user_id'])
-        serializers = self.serializer_class(data=request.data)
-        serializers.is_valid(raise_exception=True)
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
         user.set_password(request.data['new_password'])
         user.save()
+
         return Response({ 'detail': 'Password Has Changed Successfully'},status=status.HTTP_200_OK) 
 
 class ResetPasswordApiView(APIView):

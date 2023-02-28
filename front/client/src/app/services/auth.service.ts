@@ -170,6 +170,14 @@ export class AuthService {
   
   }
 
+  resendVerificationEmail (email: string) {
+    return this.http.post(this.apiUrl + "/account/api-vi/email/resend/", {
+      email: email,
+    }).pipe(
+      catchError(this.handleError),
+    )
+  }
+
   
   private handleError(errorRes:HttpErrorResponse){
     let errorMessage = 'an unknown error occurred'

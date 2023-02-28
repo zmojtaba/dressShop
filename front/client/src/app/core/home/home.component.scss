@@ -1,0 +1,25 @@
+@import "../../styles/theme.scss";
+.error{
+    background:$input_wrong_border_color ;
+    margin: 3px 0;
+    border-radius: 4px;
+    color: $font_color_light;
+
+    small{
+        padding: 13px;
+        
+    };
+}
+
+.success{
+    background:$input_success_border_color ;
+    margin: 3px 0;
+    border-radius: 4px;
+    color: $font_color_light;
+    a{
+        cursor: pointer;
+        text-decoration-line: underline
+    }
+
+}
+

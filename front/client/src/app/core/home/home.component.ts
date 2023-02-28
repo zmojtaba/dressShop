@@ -1,6 +1,5 @@
 import { Component, OnInit,OnChanges ,OnDestroy, SimpleChanges } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
-import { LoginModel } from 'src/app/models/auth.model';
 import { Subscription, take } from 'rxjs';
 @Component({
   selector: 'app-home',
@@ -15,6 +14,9 @@ export class HomeComponent implements OnInit,OnDestroy {
   logoutMessage: string;
   userIsLoggedIn :boolean;
   signUpMessage: string;
+  loadingSpinner = false;
+  resendMessage :string;
+
   constructor(private authService: AuthService){  }
 
   ngOnInit(): void {
@@ -42,9 +44,9 @@ export class HomeComponent implements OnInit,OnDestroy {
     this.authService.signUpMessage.subscribe( (data) => {
       if (data){
         this.signUpMessage = data
-        setTimeout( ()=>{
-          this.signUpMessage = ''
-        } , 3000)
+        // setTimeout( ()=>{
+        //   this.signUpMessage = ''
+        // } , 3000)
       }
       
   })
@@ -61,6 +63,16 @@ export class HomeComponent implements OnInit,OnDestroy {
     this.loginSubscription.unsubscribe()
     this.logoutSubcription.unsubscribe()
 
+  }
+  onResendEmail(){
+    this.loadingSpinner = true
+    let email: any = localStorage.getItem('user_email')
+    this.authService.resendVerificationEmail(email).subscribe( (data)=>{
+      this.loadingSpinner = false;
+      this.resendMessage = 'Email resend please check your email again!'
+    }, (error)=>{
+      this.loadingSpinner = false;
+    })
   }
 
   
