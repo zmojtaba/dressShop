@@ -4,14 +4,14 @@ from .models import *
 # Register your models here.
 class CustomUserAdmin(UserAdmin):
     model = User
-    list_display = ('email', 'phone', 'is_staff','is_active',"is_verified")
+    list_display = ('username', 'email', 'phone', 'is_staff','is_active',"is_verified")
     list_filter = ('email', 'phone', 'is_staff','is_active', 'is_verified')
     search_fields = ('email', 'phone')
     ordering = ('email',)
     fieldsets = (
        ('Authentication',{
            "fields":(
-               'email','password'
+              'username', 'email', 'phone', 'password' 
            ),
        }),
        ('permissions', {
@@ -24,7 +24,7 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'phone' , 'password1','password2', 'is_staff', 'is_active','is_superuser','is_verified')}
+            'fields': ('username', 'email', 'phone' , 'password1','password2', 'is_staff', 'is_active','is_superuser','is_verified')}
          ),
     )
 

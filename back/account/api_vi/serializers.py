@@ -5,32 +5,65 @@ from ..models import (Adress, Profile)
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenBlacklistSerializer
 from django.contrib.auth import get_user_model
 from django.conf import settings
+import re
+from rest_framework.response import Response
 
 User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['email', 'phone', 'is_staff', 'is_superuser', 'is_active', 'is_verified']
+        fields = ['username', 'email', 'phone', 'is_staff', 'is_superuser', 'is_active', 'is_verified']
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password1 = serializers.CharField(max_length=250, write_only=True)
     class Meta:
         model = User
-        fields =[ 'email', 'password', 'password1']
+        fields =[ 'username', 'password', 'password1']
+    from decimal import Decimal
+    def validate_username(self, attr):
+            email_regex = '^([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+$'
+            phone_regex = '^[/+]\d{2}\d{3}\d{3}\d{4}$'
+            is_email    =  re.search(email_regex, attr)
+            is_phone    =  re.search(phone_regex, attr) 
+            if not is_email:
+                if not is_phone :
+                    try:
+                        int(attr[1:])
+                        print('--------------------------',int(attr[1:]) )
+                        error_message = 'Enter valid Phone!'
+                
+                    except:
+                        error_message = 'Enter valid Email!'
+                    raise serializers.ValidationError({ 'detail' : error_message })        
+   
+                
+
+            return attr
+
 
     def validate(self, attrs):
         if attrs.get('password') != attrs.get('password1'):
-            raise serializers.ValidationError({'password':'Password does not match'})
+            raise serializers.ValidationError({'detail':'Password does not match'})
         try:
             validators.validate_password(password=attrs.get('password'))
         
         except exceptions.ValidationError as e:
-            raise serializers.ValidationError({ "password": list(e.messages)})
+            raise serializers.ValidationError({ "detail": list(e.messages)})
         
         return super(UserRegistrationSerializer, self).validate(attrs)
     def create(self, validated_data):
-        user = User.objects.create(email=validated_data['email'])
+        if '@' in validated_data['username']:
+            user = User.objects.create( 
+                    username=validated_data['username'],            
+                    email = validated_data['username']
+                )
+        else: 
+            user = User.objects.create(
+                username = validated_data['username'],
+                phone = validated_data['username']
+            )
+
         user.set_password(validated_data['password'])
         user.save()
         return user
@@ -42,15 +75,15 @@ class ResendVerificationEmailSerializer(serializers.Serializer):
 class UserLoginSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
-        user_eamil = User.objects.filter(email=attrs.get('email'))
-        if not user_eamil:
-            raise serializers.ValidationError({"email": "No active account found with the given credentials"})
+        user = User.objects.filter(user=attrs.get('user'))
+        if not user:
+            raise serializers.ValidationError({"detail": "No active account found with the given credentials"})
 
         try:
             data = super().validate(attrs)
         except:
-            raise serializers.ValidationError({"password": "Invalid password"})
-        data['email'] = self.user.email
+            raise serializers.ValidationError({"detail": "Invalid password"})
+        data['username'] = self.user.username
         data['access_exp'] = settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME']
         data['refresh_exp'] = settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
         return data

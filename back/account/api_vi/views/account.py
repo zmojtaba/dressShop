@@ -9,13 +9,14 @@ from rest_framework import status, serializers
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import (TokenObtainPairView,TokenBlacklistView)
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from mail_templated import EmailMessage
 from django.contrib.auth import get_user_model, authenticate
 import jwt
 from django.conf import settings
 from django.http import HttpResponseRedirect
 
-from .utils import (customRefreshToken, EmailThreading, get_tokens_for_user, get_token_for_email_verification )
+from .utils import (EmailThreading, get_tokens_for_user, get_token_for_email_verification )
 
 User = get_user_model()
 
@@ -27,15 +28,17 @@ class UserRegistrationApiView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         # send email to created user
-        user = User.objects.get(email = serializer.validated_data['email'])
-        verification_refresh_token, verification_access_token = get_token_for_email_verification(user)
+        user = User.objects.get(username = serializer.validated_data['username'])
         refresh_token, access_token = get_tokens_for_user(user)
-        verification_email = EmailMessage('email/email_varification.html', 
-                                    {'token':verification_refresh_token}, 
-                                    'kaka.mehrsam@gmail.com', 
-                                    [user.email])
-        
-        EmailThreading(verification_email).start()
+
+        if user.email:
+            verification_refresh_token, verification_access_token = get_token_for_email_verification(user)
+            verification_email = EmailMessage('email/email_varification.html', 
+                                        {'token':verification_refresh_token}, 
+                                        'kaka.mehrsam@gmail.com', 
+                                        [user.email])
+            
+            EmailThreading(verification_email).start()
         return Response({
             'message':"sign up successfully",
             'refresh_token' : refresh_token,
@@ -52,7 +55,7 @@ class ResendEmailVerificationApiView(APIView):
         except:
             raise serializers.ValidationError({'detail':'Email required'})
         if not user:
-            return Response({'detail':'user does not exist'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail':'user with this email address does not exist'}, status=status.HTTP_404_NOT_FOUND)
         refresh = get_token_for_email_verification(user)[0]
         varification_email = EmailMessage('email/email_varification.html', 
                                     {'token':refresh}, 
@@ -88,17 +91,18 @@ class UserLogoutView(TokenBlacklistView):
 
 
 class ChangePasswordView(APIView):
+    permission_classes = IsAuthenticated
     serializer_class = ChangePasswordSerializer
     def post(self, request, *args, **kwargs):
-        user = authenticate(email=request.user.email, password=request.data['current_password'])
+        user = authenticate(username=request.user.username, password=request.data['current_password'])
         if user is None:
             return Response({'detail': 'your current password is not correct'}, status=status.HTTP_406_NOT_ACCEPTABLE)
         serializer = self.serializer_class(user, data=request.data)
         serializer.is_valid(raise_exception=True)
-        # user.set_password(request.data['new_password'])
+        user.set_password(request.data['new_password'])
         # user.save()
         serializer.save()
-        return Response({'detail': 'success'})
+        return Response({'detail': 'password successfully changed'})
         
 
 # reset password when userhas not loged in yet
@@ -106,7 +110,7 @@ class ChangePasswordView(APIView):
 class ResetPasswordEmail(APIView):
     serializer_class = ResendVerificationEmailSerializer
     def post(self, request, *args, **kwargs):
-        user = User.objects.filter(email = request.data['email'])
+        user = User.objects.filter(username = request.data['username'])
         if not user:
             raise serializers.ValidationError({'detail': 'account does not exist'})
         user = user[0]

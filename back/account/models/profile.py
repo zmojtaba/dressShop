@@ -29,7 +29,7 @@ class Profile(models.Model):
     updated_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.user.email
+        return self.user.username
 
 @receiver(post_save, sender=User)
 def save_profile(sender, instance, created, **kwargs):

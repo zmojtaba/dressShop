@@ -4,16 +4,19 @@ from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, password, **extra_fields):
-        if not email:
-            raise ValueError(_("The email must be set"))
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
+    def create_user(self, username, password, **extra_fields):
+        if not username:
+            raise ValueError(_({'detail': "This Field is requred!"} ))
+        username = self.normalize_email(username)
+        if "@" in username:
+            user = self.model(username=username, email=username, **extra_fields)
+        else:
+            user = self.model(username=username, phone=username, **extra_fields)
         user.set_password(password)
         user.save()
         return user
 
-    def create_superuser(self, email, password, **extra_fields):
+    def create_superuser(self, username, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
@@ -21,17 +24,18 @@ class UserManager(BaseUserManager):
             raise ValueError(_("Superuser must have is_staff=True"))
         if extra_fields.get('is_superuser') is not True:
             raise ValueError(_("Superuser must have is_superuser=True"))
-        return self.create_user(email, password, **extra_fields)
+        return self.create_user(username, password, **extra_fields)
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(max_length=255, unique=True)
-    phone = PhoneNumberField(blank=True)
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    is_verified = models.BooleanField(default=False)
+    username        = models.CharField(max_length=255, unique=True)
+    email           = models.EmailField(max_length=255, blank=True, null=True)
+    phone           = models.CharField(max_length=13, blank=True, null=True)
+    is_staff        = models.BooleanField(default=False)
+    is_superuser    = models.BooleanField(default=False)
+    is_active       = models.BooleanField(default=True)
+    is_verified     = models.BooleanField(default=False)
     
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
@@ -39,4 +43,4 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     def __str__(self):
-        return self.email
+        return self.username
