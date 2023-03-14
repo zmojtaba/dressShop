@@ -1,6 +1,8 @@
 import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { Router, Routes } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
+import { NbDialogService } from '@nebular/theme';
+import { SignUpComponent } from '../sign-up/sign-up.component';
 
 @Component({
   selector: 'app-header',
@@ -9,9 +11,25 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class HeaderComponent implements OnInit {
   constructor(private authService: AuthService,
-              private router: Router){}
+              private router: Router,
+              private dialogService: NbDialogService,
+                ){}
+
   userIslogedIn: boolean = false;
   userEmail: string | null ;
+
+
+  openWithBackdropClick() {
+    this.open(true);
+  }
+
+  openWithoutBackdropClick() {
+    this.open(false);
+  }
+
+  protected open(closeOnBackdropClick: boolean) {
+    this.dialogService.open(SignUpComponent, { closeOnBackdropClick });
+  } 
 
 
   onLogOut(){

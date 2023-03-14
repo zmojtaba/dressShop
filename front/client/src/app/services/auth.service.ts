@@ -93,9 +93,9 @@ export class AuthService {
     })
   }
 
-  signUpService(email:string, password:string, password1:string) {
+  signUpService(username:string, password:string, password1:string) {
     return this.http.post(this.apiUrl + "/account/api-vi/sign-up/", {
-      email: email,
+      username: username,
       password: password, 
       password1: password1
     }).pipe(
@@ -103,7 +103,7 @@ export class AuthService {
         tap( (data:any)=> {
           localStorage.setItem('refresh_token', data['refresh_token'])
           localStorage.setItem('access_token', data['access_token'])
-          localStorage.setItem('user_email', email)
+          localStorage.setItem('user_email', username)
           this.userIsLoggedIn.next(true)
           this.signUpMessage.next(data['message'])
           }
@@ -185,7 +185,7 @@ export class AuthService {
     if (!errorRes.error){
       return throwError(errorMessage)
     }
-    if(errorRes.error.email){
+    if(errorRes.error.username){
       errorMessage=errorRes.error['email']
     }
     if(errorRes.error['password']){

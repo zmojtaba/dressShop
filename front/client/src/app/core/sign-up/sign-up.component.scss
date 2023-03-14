@@ -1,13 +1,31 @@
 @import "../../styles/theme.scss";
 
+.title{
+    text-align: center;
+    h2{
+        margin: 0;
+    }
+    
+}
+
+
 form{
+    position: relative;
+    margin-top: 2.5rem;
+    span{
+        cursor: pointer;
+    }
+
+    .bold{
+        font-weight: bold;
+        text-decoration: underline;
+        
+    }
+
     .form-control:focus{
         box-shadow: none;
     }
 
-    button{
-        background: $button_submit_color;
-    }
     .hide{
         display: none;
     }
@@ -18,8 +36,36 @@ form{
     .valid, .valid:focus{
         border-color: $input_success_border_color;
     }
+    label{
+        margin-bottom: 0.3rem;
+        font-weight: 500;
+        font-style: italic;
+    }
+    button{
+        position: relative;
+        background: $button_submit_color;
+        margin-top: 2.5rem;
+        width: 100%;
+        border: none;
+        mat-icon{
+            position:absolute
+        }
+    }
+    .sign-in_instead{
+        margin-top: 2.5rem;
+        text-align: center;
+        font-style: italic;
+    }
+    a, a:hover{
+        cursor: pointer;
+        text-decoration: underline ;
+        font-style: italic;
+    }
+    input{
+        font-weight: 501;
+        font-style: italic;
+    }
 }
-
 
 .error{
     background:$input_wrong_border_color ;
@@ -45,25 +91,47 @@ form{
     };
 }
 
-::ng-deep .pass-input{
-    span{
-        height: 40px;
-        justify-content: center;
-    }
-    position: relative;
-    .pass-visible{
-        height: 40px;
-        
 
-        button{
-            padding: 0;
+::ng-deep mat-slide-toggle{
+    p{
+        margin: 0;
+        font-style: italic;
+    }
+    // position: absolute;
+    // right: 0;
+    // top: 77px;
+
+    // margin: 0 !important
+}
+
+::ng-deep .input-element{
+    margin-top: 0.75rem;
+    .pass-input{
+        span{
             height: 40px;
-            position: absolute;
-            top: 3px;
-            right: 0;
+            justify-content: center;
+        }
+        position: relative;
+        .pass-visible{
+            height: 40px;
             
+
+            button{
+                padding: 0;
+                height: 40px;
+                position: absolute;
+                top: 3px;
+                right: 0;
+                font-style: italic;
+                
+            }
+
+        }
+
+        input{
+            font-weight: 501;
+            font-style: italic;
         }
 
     }
-
 }

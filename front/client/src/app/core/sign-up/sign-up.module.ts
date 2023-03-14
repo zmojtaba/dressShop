@@ -12,6 +12,8 @@ import { MatPasswordStrengthModule } from '@angular-material-extensions/password
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from "@angular/material/form-field";
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatIconModule} from '@angular/material/icon';
+import { RouterModule } from '@angular/router';
 
 
 @NgModule({
@@ -29,7 +31,9 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     MatPasswordStrengthModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatIconModule,
+    RouterModule
   ]
 })
 export class SignUpModule { }

@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from "@angular/material/icon";
 import { SideBarModule } from './side-bar/side-bar.module';
 import { SideBarComponent } from './side-bar/side-bar.component';
+import { NbDialogModule } from '@nebular/theme';
 
 
 
@@ -23,6 +24,7 @@ import { SideBarComponent } from './side-bar/side-bar.component';
     MatButtonModule,
     MatIconModule,
     SideBarModule,
+    NbDialogModule.forRoot(),
 
   ],
   exports: [

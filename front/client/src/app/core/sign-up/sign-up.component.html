@@ -5,49 +5,74 @@
         {{err}}
       </div>
     </ng-container>
+
   <div class="mt-3 mb-3" *ngIf="signupSuccess">
       <div class="alert alert-success success" role="alert"    >
           <p>{{signupSuccess}}</p>
       </div><br>
-      <small class="text-success">an email has sent to your email account please check it for activating your account</small>
+      <small class="text-success">Verification Email has sent to your email account please check it for activating your account</small>
   </div>
-  <ng-container *ngIf="!signupSuccess">
-    <form class="form-group"  [formGroup]="signUpForm" (ngSubmit)="onSignUp(signUpForm)" *ngIf="!snippingLoading">
 
-      <label for="email"> email</label>
-      <input type="email" 
+  <div class="title"  >
+    <h2 *ngIf=" formStatus=='signUp' ">Register</h2>
+    <h2 *ngIf="formStatus=='signIn'">Log In</h2>
+  </div>
+
+  <ng-container *ngIf="!signupSuccess">
+    <form class="form-group"  [formGroup]="signUpForm" (ngSubmit)="onSignUp(signUpForm)" *ngIf="!snippingLoading  && formStatus=='signUp'">
+
+      <label for="username"><span (click)="onSetEmailAsUsername()" [class]=" {'bold': usernameField=='email'} " >Email</span>/ <span (click)="onSetPhoneAsUsername()" [class]=" {'bold': usernameField=='phone'} " >Phone Number</span></label>
+
+
+      <input type=email *ngIf="usernameField=='email'"
+        formControlName= "username"
         class="form-control mt-1" 
-        id="email" 
-        name="email" 
-        formControlName="email" 
-        [class]="{'valid' : (signUpForm.controls.email.valid) , 'invalid': (!signUpForm.controls.email.valid && signUpForm.controls.email.touched)}"
-        placeholder="user@gmail.com"
+        id="username" 
+        name="username" 
+        [class]="{'valid' : (signUpForm.controls.username.valid) , 'invalid': (!signUpForm.controls.username.valid && signUpForm.controls.username.touched)}"
+        placeholder=user@gmail.com
         >
 
-      <div class="error" >
-        <small *ngIf="!signUpForm.controls.email.value && signUpForm.controls.email.touched"> email is required!</small>
-        <small *ngIf="signUpForm.controls.email.value && signUpForm.controls.email.errors && signUpForm.controls.email.touched" >please enter valid email address!</small>
+        <input type=text *ngIf="usernameField=='phone'"
+        class="form-control mt-1" 
+        formControlName= "username"
+        id="username" 
+        name="username" 
+        [class]="{'valid' : (signUpForm.controls.username.valid) , 'invalid': (!signUpForm.controls.username.valid && signUpForm.controls.username.touched)}"
+        placeholder=+989120000000
+        >
+
+      <div class="error" *ngIf="usernameField=='email'" >
+        <small *ngIf="!signUpForm.controls.username.value && signUpForm.controls.username.touched"> Email is required!</small>
+        <small *ngIf="signUpForm.controls.username.value && signUpForm.controls.username.errors && signUpForm.controls.username.touched" >Please enter valid email address!</small>
       </div>
 
-      <mat-slide-toggle
-        class="mt-3 mb-3"
-        (click)="OnPasswordToggle()"
-        color="primary">
-        <small>show password status</small>
-      </mat-slide-toggle><br>
-
-      <label for="password"> password</label>
-      <div class="pass-input">  
-          <mat-pass-toggle-visibility class="pass-visible" #toggle></mat-pass-toggle-visibility>     
-          <input class="form-control mt-1 mb-2" matInput #password
-                 formControlName="password"
-                 [type]="toggle.type"
-                 id="password"
-                 [class]="{ 'invalid': (signUpForm.controls.password.errors && signUpForm.controls.password.touched ), 'valid' : !signUpForm.controls.password.pristine && ! signUpForm.controls.password.errors }"
-                >
-          
-
+      <div class="error" *ngIf="usernameField=='phone'" >
+        <small *ngIf="!signUpForm.controls.username.value && signUpForm.controls.username.touched"> Phone number is required!</small>
+        <small *ngIf="signUpForm.controls.username.value && signUpForm.controls.username.errors && signUpForm.controls.username.touched" >Please enter valid Phone number address!</small>
       </div>
+
+      <div class="input-element">
+
+        <div class="password-labeling d-flex flex-row justify-content-between">
+            <label for="password"> Password</label>
+
+            <mat-slide-toggle
+            (click)="OnPasswordToggle()"
+            color="primary">
+            <p>Status</p>
+          </mat-slide-toggle>
+      </div>
+
+        <div class="pass-input">  
+            <mat-pass-toggle-visibility class="pass-visible" #toggle></mat-pass-toggle-visibility>     
+            <input class="form-control mt-1 mb-2" matInput #password
+                  formControlName="password"
+                  [type]="toggle.type"
+                  id="password"
+                  [class]="{ 'invalid': (signUpForm.controls.password.errors && signUpForm.controls.password.touched ), 'valid' : !signUpForm.controls.password.pristine && ! signUpForm.controls.password.errors }"
+                  >
+        </div>
         <div [ngClass]=" showPasswordStatus ? 'show' : 'hide' " class="password_hint">
 
             <mat-password-strength #passwordComponent
@@ -59,9 +84,11 @@
               *ngIf="showDetails"
               [passwordComponent]="passwordComponent">
             </mat-password-strength-info> 
-        </div>  
+        </div>
+      </div>  
 
-        <label for="password1"> password1</label>
+      <div class="input-element">
+        <label for="password1">Confirm Password</label>
         <div class="pass-input">  
           <mat-pass-toggle-visibility class="pass-visible" #toggle1></mat-pass-toggle-visibility>
           <input 
@@ -76,12 +103,60 @@
           <div class="error" *ngIf="signUpForm.controls.password1.touched 
                       && signUpForm.controls.password.touched 
                       && password.value !== password1.value" >
-                <small> password does not match </small>
+                <small> Password does not match </small>
           </div>
-        </div> 
+        </div>
+      </div> 
+        
+        <button type="submit" class="btn" [disabled]="!signUpForm.valid || password.value !== password1.value ">Submit<mat-icon>arrow_forward</mat-icon></button>
 
-        <button type="submit" class="btn mt-1" [disabled]="!signUpForm.valid || password.value !== password1.value ">Submit</button>
+        <div class="sign-in_instead" >
+          <h6>Already have an account? <a (click)="changeFormToSignIn()" >Sign-in</a> instead</h6>
+        </div>
+        
     </form>
     <mat-spinner class="col-xs-12 col-md-6 col-md-offser-3" *ngIf="snippingLoading"></mat-spinner>
+  </ng-container>
+
+
+  <!-- login part -->
+  <ng-container >
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin(loginForm)" *ngIf="!snippingLoading && formStatus=='signIn'" >
+      <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email"
+              id="email"
+              placeholder="email@gmail.com" 
+              class="form-control" 
+              [ngClass]="{'invalid' : (loginForm.controls.email.errors && loginForm.controls.email.touched) ,'valid': (!loginForm.controls.email.errors && !loginForm.controls.email.pristine)}" 
+              name="email" 
+              formControlName="email">
+
+          <div class="error" >
+              <small *ngIf="!loginForm.controls.email.value && loginForm.controls.email.touched "> Email is required!</small>
+              <small *ngIf="loginForm.controls.email.touched && loginForm.controls.email.errors && loginForm.controls.email.value">Please enter valid email address!</small>
+          </div>
+          <div class="input-element">
+            <label for="password">Password</label>
+            <input type="text" 
+                id="password" 
+                class="form-control"
+                placeholder="password"
+                [class]="{'invalid' : (loginForm.controls.password.errors && loginForm.controls.password.touched) ,'valid': (!loginForm.controls.password.errors && !loginForm.controls.password.pristine)}" 
+                name="password" 
+                formControlName="password">
+                <div class="error" >
+                    <small *ngIf="!loginForm.controls.password.value && loginForm.controls.password.touched" > Password is required! </small>
+                </div>
+          </div>
+          <a>  Forgot password? </a>
+          <button type="submit" class="btn" [disabled]="!loginForm.valid">LogIn<mat-icon>arrow_forward</mat-icon></button>
+
+          <div class="sign-in_instead" >
+            <h6>Don't have an account? <a (click)="changeFormToSignUp()" >Sign-up</a> instead</h6>
+          </div>
+      </div>
+  </form>
+  <mat-spinner  *ngIf="snippingLoading" ></mat-spinner>
   </ng-container>
 </div>
