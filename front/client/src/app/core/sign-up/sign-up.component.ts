@@ -48,8 +48,8 @@ export class SignUpComponent implements OnInit, OnChanges {
         this.usernameValidator,
         Validators.email, 
       ]],
-      password: ['', [Validators.required, Validators.minLength(8), Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-zd$@$!%*?&].{8,15}') ]],
-      password1: ['', [Validators.required, Validators.minLength(8), Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-zd$@$!%*?&].{8,15}')]],
+      password: ['', [Validators.required, Validators.minLength(8), Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z0-9d$@$!%*?&].{8,150}') ]],
+      password1: ['', [Validators.required, Validators.minLength(8), Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z0-9d$@$!%*?&].{8,150}')]],
     });
 
     this.loginForm = this.fb.group({
@@ -77,7 +77,7 @@ export class SignUpComponent implements OnInit, OnChanges {
 
    onSetPhoneAsUsername(){
     this.usernameField = 'phone';
-    this.usernameValidator = Validators.pattern("^([\+]?[0]{1}[0-9]{3}[0-9]{3}[0-9]{4})|([\+]{1}[0-9]{1,3}[0-9]{3}[0-9]{4,6})");
+    this.usernameValidator = Validators.pattern("^([0]{1}[0-9]{3}[0-9]{3}[0-9]{4})|([\+]{1}[0-9]{1,3}[0-9]{3}[0-9]{4,6})");
     this.signUpForm.controls.username.removeValidators
     this.signUpForm.controls.username.setValidators([
       Validators.required,
