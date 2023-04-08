@@ -26,9 +26,12 @@ class UserRegistrationApiView(GenericAPIView):
     def post(self, request, *args, **kwargs):       
         serializer = self.serializer_class(data = request.data)
         serializer.is_valid(raise_exception=True)
+        print('------------------------------1')
         serializer.save()
         # send email to created user
+        print('------------------------------2')
         user = User.objects.get(username = serializer.validated_data['username'])
+        print('------------------------------3')
         refresh_token, access_token = get_tokens_for_user(user)
 
         if user.email:
@@ -51,7 +54,7 @@ class ResendEmailVerificationApiView(APIView):
 
     def post(self, request, *args, **kwargs):
         try :
-            user = User.objects.filter(email = request.data['email'])[0]
+            user = User.objects.filter(username = request.data['username'])[0]
         except:
             raise serializers.ValidationError({'detail':'Email required'})
         if not user:

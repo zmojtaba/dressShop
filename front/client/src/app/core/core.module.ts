@@ -25,7 +25,6 @@ import { NbDialogModule } from '@nebular/theme';
     MatIconModule,
     SideBarModule,
     NbDialogModule.forRoot(),
-
   ],
   exports: [
     HeaderComponent,

@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 import re
 from rest_framework.response import Response
+from rest_framework.validators import UniqueValidator
 
 User = get_user_model()
 
@@ -20,25 +21,24 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields =[ 'username', 'password', 'password1']
-    from decimal import Decimal
+
     def validate_username(self, attr):
             email_regex = '^([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+$'
-            phone_regex = '^[/+]\d{2}\d{3}\d{3}\d{4}$'
+            phone_regex = "^([0]{1}[0-9]{3}[0-9]{3}[0-9]{4})|([\+]{1}[0-9]{1,3}[0-9]{3}[0-9]{4,6})"
             is_email    =  re.search(email_regex, attr)
             is_phone    =  re.search(phone_regex, attr) 
+            # checking format of username
             if not is_email:
                 if not is_phone :
                     try:
                         int(attr[1:])
-                        print('--------------------------',int(attr[1:]) )
-                        error_message = 'Enter valid Phone!'
-                
+                        error_message = 'Enter valid Phone!'               
                     except:
                         error_message = 'Enter valid Email!'
-                    raise serializers.ValidationError({ 'detail' : error_message })        
-   
-                
-
+                    raise serializers.ValidationError({ 'detail' : error_message }) 
+                if attr[0] == '+':
+                    attr = '0'+attr[3:]
+  
             return attr
 
 
@@ -53,16 +53,25 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         
         return super(UserRegistrationSerializer, self).validate(attrs)
     def create(self, validated_data):
+        # to seprate number and email
         if '@' in validated_data['username']:
             user = User.objects.create( 
                     username=validated_data['username'],            
                     email = validated_data['username']
                 )
         else: 
-            user = User.objects.create(
-                username = validated_data['username'],
-                phone = validated_data['username']
-            )
+            # save all phone number with digit format not +98
+            phone_field = validated_data['username']
+            if validated_data['username'][0] == '+':
+                phone_field ='0'+validated_data['username'][3:]
+            # checking the unique of the phone number
+            try:
+                user = User.objects.create(
+                    username = phone_field,
+                    phone = phone_field
+                )
+            except:
+                raise serializers.ValidationError({'username':'this user is already exists'})
 
         user.set_password(validated_data['password'])
         user.save()
@@ -74,8 +83,10 @@ class ResendVerificationEmailSerializer(serializers.Serializer):
 
 class UserLoginSerializer(TokenObtainPairSerializer):
 
-    def validate(self, attrs):
-        user = User.objects.filter(user=attrs.get('user'))
+    def validate(self, attrs):     
+        if attrs['username'][0] == '+':
+            attrs['username'] ='0' + attrs['username'][3:]
+        user = User.objects.filter(username=attrs['username'])
         if not user:
             raise serializers.ValidationError({"detail": "No active account found with the given credentials"})
 
@@ -83,17 +94,17 @@ class UserLoginSerializer(TokenObtainPairSerializer):
             data = super().validate(attrs)
         except:
             raise serializers.ValidationError({"detail": "Invalid password"})
+
         data['username'] = self.user.username
         data['access_exp'] = settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME']
         data['refresh_exp'] = settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
+
         return data
 
 class UserLogoutSerializer(TokenBlacklistSerializer):
     def validate(self, attrs):
         data = super(UserLogoutSerializer, self).validate(attrs)
-
         data['detail'] = "successfully logged out"
-
         return data
         
 

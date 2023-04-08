@@ -1,10 +1,10 @@
-import { Component, OnInit, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { Component, OnInit, OnChanges, SimpleChanges, OnDestroy, Input } from '@angular/core';
 import {AuthService} from '../../services/auth.service'
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import {ChangeDetectorRef } from '@angular/core';
 import { SignUpModel } from 'src/app/models/auth.model';
 import { Router } from '@angular/router';
+import { NbDialogRef, NbDialogService } from '@nebular/theme';
 
 
 @Component({
@@ -16,15 +16,15 @@ export class SignUpComponent implements OnInit, OnChanges {
   constructor(public authService: AuthService,
               private fb: FormBuilder,
               private cdref: ChangeDetectorRef,
-              private router: Router,        
+              private router: Router,   
+              protected dialogRef: NbDialogRef<any>,    
     ){}
 
   ngAfterContentChecked() {
     this.cdref.detectChanges();
-    console.log('---------******---------', this.signUpForm)   
       }
 
-
+  @Input() formStatus: string = '';
   signupError: string = '';
   signupSuccess: string = '';
   signUpForm: FormGroup;
@@ -33,7 +33,6 @@ export class SignUpComponent implements OnInit, OnChanges {
   showDetails: boolean=true;
   loginForm : FormGroup;
   loginError : string = '';
-  formStatus: string = 'signUp';
   usernameField: string = 'email';
   usernameValidator:any = Validators.pattern("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-z]{2,7}$");
 
@@ -41,7 +40,6 @@ export class SignUpComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(){ 
-
     this.signUpForm = this.fb.group({
       username: ['', [
         Validators.required,
@@ -53,10 +51,9 @@ export class SignUpComponent implements OnInit, OnChanges {
     });
 
     this.loginForm = this.fb.group({
-      email: ['', [
-        Validators.required, 
-        Validators.email, 
-        Validators.pattern("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-z]{2,7}$")
+
+      username: ['', [
+        Validators.required,
       ]],
       password: ['', [Validators.required]],
     })
@@ -94,13 +91,14 @@ export class SignUpComponent implements OnInit, OnChanges {
    }
 
    onLogin(form:any){
-    const email = form.value.email
+    const username = form.value.username
     const password = form.value.password
     this.snippingLoading = true
-    this.authService.logInService(email, password)
+    this.authService.logInService(username, password)
     .subscribe(data => {
       console.log(data)
       this.snippingLoading = false;
+      this.dialogRef.close();
       this.router.navigate([''])
     }, err => {
       this.loginError = err
@@ -118,14 +116,16 @@ export class SignUpComponent implements OnInit, OnChanges {
 
   onSignUp(form:any){
     this.snippingLoading = true;
-    const email = form.value.email
+    const username = form.value.username
     const password = form.value.password
     const password1 = form.value.password1
+
     
-    this.authService.signUpService(email, password, password1)
+    this.authService.signUpService(username, password, password1)
     .subscribe((data : SignUpModel) => {
       this.snippingLoading = false
       this.signupSuccess = data['message']
+      this.dialogRef.close();
       this.router.navigate(['/'])
     }, errorMessage => {
       this.snippingLoading = false

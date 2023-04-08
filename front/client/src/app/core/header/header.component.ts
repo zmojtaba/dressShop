@@ -19,22 +19,27 @@ export class HeaderComponent implements OnInit {
   userEmail: string | null ;
 
 
-  openWithBackdropClick() {
-    this.open(true);
+  onSignUp() {
+    const dialogRef = this.dialogService.open(SignUpComponent, {    context: {
+      formStatus: 'signUp',
+    }, },);
   }
 
-  openWithoutBackdropClick() {
-    this.open(false);
+  onSignIn() {
+    const dialogRef = this.dialogService.open(SignUpComponent, {    context: {
+      formStatus: 'signIn',
+    }, },);
   }
+
 
   protected open(closeOnBackdropClick: boolean) {
-    this.dialogService.open(SignUpComponent, { closeOnBackdropClick });
+    this.dialogService.open(SignUpComponent, { closeOnBackdropClick ,context: 'pass data in template' },);
   } 
 
 
   onLogOut(){
     const refresh_token = localStorage.getItem('refresh_token')
-    this.authService.logOut(refresh_token).subscribe()
+    this.authService.logOutService(refresh_token).subscribe()
     this.router.navigate([''])    
   }
 

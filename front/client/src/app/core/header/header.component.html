@@ -13,8 +13,8 @@
           
           <ul class="navbar-nav ms-auto me-3" *ngIf="!userIslogedIn">
 
-            <li><a class="me-2 item dialog " (click)="openWithBackdropClick()" > Sign Up</a></li>
-            <li><a class="me-2 item" > Sign In</a></li>
+            <li><a class="me-2 item dialog " (click)="onSignUp()" > Sign Up</a></li>
+            <li><a class="me-2 item" (click)="onSignIn()" > Sign In</a></li>
         </ul>
 
         <ul class="navbar-nav ms-auto me-3" *ngIf="userIslogedIn">

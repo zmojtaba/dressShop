@@ -14,6 +14,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatIconModule} from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
+import { NbCardModule, NbSpinnerModule } from '@nebular/theme';
 
 
 @NgModule({
@@ -26,6 +27,8 @@ import { RouterModule } from '@angular/router';
     SignUpRoutingModule,
     FormsModule,
     MatProgressSpinnerModule,
+    NbCardModule,
+    NbSpinnerModule,
     ReactiveFormsModule,
     PasswordStrengthMeterModule.forRoot(),
     MatPasswordStrengthModule,

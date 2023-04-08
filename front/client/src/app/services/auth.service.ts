@@ -112,9 +112,9 @@ export class AuthService {
       )
   }
 
-  logInService(email:string, password:string){
+  logInService(username:string, password:string){
     return this.http.post(this.apiUrl + "/account/api-vi/sign-in/", {
-      email: email,
+      username: username,
       password: password
   }).pipe(
 
@@ -128,7 +128,7 @@ export class AuthService {
         +resData.access_exp )
       localStorage.setItem('refresh_token', resData.refresh)
       localStorage.setItem('access_token', resData.access)
-      localStorage.setItem('user_email', email)
+      localStorage.setItem('user_email', username)
 
       this.loginResponseData.next(loginResponse)
       this.userIsLoggedIn.next(true)
@@ -137,7 +137,7 @@ export class AuthService {
   )
 }
   
-  logOut(refresh:any) {
+  logOutService(refresh:any) {
     return this.http.post(this.apiUrl + "/account/api-vi/sign-out/",{refresh}).pipe(
       tap( (data:any) => {
         this.userIsLoggedIn.next(false)
@@ -186,7 +186,7 @@ export class AuthService {
       return throwError(errorMessage)
     }
     if(errorRes.error.username){
-      errorMessage=errorRes.error['email']
+      errorMessage=errorRes.error['username']
     }
     if(errorRes.error['password']){
       errorMessage=errorRes.error['password']
@@ -196,6 +196,8 @@ export class AuthService {
     }
     if (errorRes.error['detail']){
       errorMessage=errorRes.error['detail']
+    }else{
+      return throwError(errorMessage)
     }
     return throwError(errorMessage)
   }

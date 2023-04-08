@@ -97,11 +97,6 @@ form{
         margin: 0;
         font-style: italic;
     }
-    // position: absolute;
-    // right: 0;
-    // top: 77px;
-
-    // margin: 0 !important
 }
 
 ::ng-deep .input-element{
@@ -131,6 +126,27 @@ form{
         input{
             font-weight: 501;
             font-style: italic;
+        }
+
+    }
+}
+
+::ng-deep .spinner_loading{
+    nb-card{
+        margin: 0;
+        display: flex;
+        position: relative;
+
+        nb-spinner{
+            background-color: initial !important;
+            span{
+                position: absolute;
+                right: 32px;
+                border-right-color: #588157 !important;
+                border-bottom-color:   #588157 !important ;    
+                border-left-color:  #588157   !important;
+                border-top-color:#fff !important;
+            }
         }
 
     }
